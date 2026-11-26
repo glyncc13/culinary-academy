@@ -1,5 +1,15 @@
 # Commercial launch gate — NOT approved for live use
 
+## Proposed business details — 26 November 2026
+- Trading name: Culinary Academy (proposed; legal identity not confirmed).
+- Legal structure: undecided.
+- Support email: undecided.
+- Website domain: undecided.
+- Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
+
+Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
+
+
 ## Draft membership terms (requires trader details and legal review)
 Supplier: [legal name, trading address, registration details if applicable, support email]. Do not publish until completed.
 Membership provides online culinary educational content, assessments and internal certificates; not regulated qualifications or proof of workplace competence. Follow your employer's food safety procedures.
