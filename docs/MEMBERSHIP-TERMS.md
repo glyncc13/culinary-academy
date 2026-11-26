@@ -1,4 +1,14 @@
 # Membership terms — draft for legal approval
+
+## Proposed business details — 26 November 2026
+- Trading name: Culinary Academy (proposed; legal identity not confirmed).
+- Legal structure: undecided.
+- Support email: undecided.
+- Website domain: undecided.
+- Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
+
+Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
+
 Effective date: [date]. Trader: [legal name, geographic address, company number if applicable, email and telephone].
 Membership costs £14.99 per month including applicable taxes, billed automatically monthly until cancelled. No minimum commitment beyond the billing period. Before payment we will show the price, renewal frequency and cancellation arrangements.
 Your membership includes online culinary lessons, assessments and internal completion certificates. These are not regulated qualifications or evidence of workplace competence. Follow workplace safety procedures.
