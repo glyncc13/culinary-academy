@@ -97,3 +97,25 @@ select 1 from public.academy_module_lessons ml join public.lessons l on l.id=ml.
 $eligible$;
 revoke all on function public.academy_practical_eligible(uuid,smallint) from public,anon,authenticated;
 grant execute on function public.academy_practical_eligible(uuid,smallint) to service_role;
+
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values('academy-evidence','academy-evidence',false,52428800,array['image/jpeg','image/png','image/webp','video/mp4','video/webm']);
+create table public.academy_evidence_files(
+ id uuid primary key default gen_random_uuid(), submission_id uuid not null references public.academy_practical_submissions(id),
+ object_path text not null unique, mime text not null check(mime in ('image/jpeg','image/png','image/webp','video/mp4','video/webm')),
+ created_at timestamptz not null default now(), attached boolean not null default false
+);
+alter table public.academy_evidence_files enable row level security;
+revoke all on public.academy_evidence_files from public,anon,authenticated;
+grant select,insert,update on public.academy_evidence_files to service_role;
+create function public.academy_reserve_evidence(p_user uuid,p_submission uuid,p_mime text) returns jsonb language plpgsql security invoker set search_path='' as $reserve$
+declare f public.academy_evidence_files; fid uuid:=gen_random_uuid();
+begin
+perform 1 from public.academy_practical_submissions where id=p_submission and user_id=p_user and status='pending' for update;
+if not found then raise exception 'submission unavailable'; end if;
+if not exists(select 1 from public.subscriptions where user_id=p_user and status in ('active','trialing') and current_period_end>now()) then raise exception 'membership required'; end if;
+if (select count(*) from public.academy_evidence_files where submission_id=p_submission)>=5 then raise exception 'file limit'; end if;
+insert into public.academy_evidence_files(id,submission_id,object_path,mime) values(fid,p_submission,p_user::text||'/'||p_submission::text||'/'||fid::text,p_mime) returning * into f;
+return to_jsonb(f);
+end $reserve$;
+revoke all on function public.academy_reserve_evidence(uuid,uuid,text) from public,anon,authenticated;
+grant execute on function public.academy_reserve_evidence(uuid,uuid,text) to service_role;
