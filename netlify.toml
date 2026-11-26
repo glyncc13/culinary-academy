@@ -1,5 +1,6 @@
 [build]
-  publish = "."
+  command = "mkdir -p dist && cp membership.html dist/index.html && cp membership.html dist/membership.html"
+  publish = "dist"
   functions = "netlify/functions"
 [functions]
   node_bundler = "esbuild"

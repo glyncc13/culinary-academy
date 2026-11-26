@@ -12,7 +12,8 @@ exports.handler=async(event)=>{
    const saved=await db(`billing_customers?user_id=eq.${encodeURIComponent(user.id)}&select=stripe_customer_id`);
    customerId=saved[0].stripe_customer_id;
   }
-  const session=await stripe.checkout.sessions.create({mode:'subscription',customer:customerId,line_items:[{price:process.env.STRIPE_MONTHLY_PRICE_ID,quantity:1}],client_reference_id:user.id,subscription_data:{metadata:{supabase_user_id:user.id}},success_url:`${site()}/?billing=success`,cancel_url:`${site()}/?billing=cancelled`});
+  const existing=await stripe.subscriptions.list({customer:customerId,status:'all',limit:100});if(existing.has_more||existing.data.some(s=>['active','trialing','past_due','unpaid','incomplete','paused'].includes(s.status)))return json(409,{error:'Existing subscription; use billing portal.'});
+  const session=await stripe.checkout.sessions.create({mode:'subscription',customer:customerId,line_items:[{price:process.env.STRIPE_MONTHLY_PRICE_ID,quantity:1}],client_reference_id:user.id,subscription_data:{metadata:{supabase_user_id:user.id}},success_url:`${site()}/membership.html?billing=success`,cancel_url:`${site()}/membership.html?billing=cancelled`});
   return json(200,{url:session.url});
  }catch(e){console.error('Checkout error',e);return json(400,{error:'Unable to start checkout. Check configuration and sign-in.'});}
 };

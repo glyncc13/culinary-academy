@@ -1,4 +1,5 @@
 const Stripe = require('stripe');
+if(process.env.SUPABASE_URL!=='https://wltgzehmwwxsmtquuyzl.supabase.co'||! /^(sk|rk)_test_/.test(process.env.STRIPE_SECRET_KEY||''))throw Error('Test configuration required');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const base = () => process.env.SUPABASE_URL.replace(/\/$/, '');
 const adminHeaders = () => ({ apikey:process.env.SUPABASE_SERVICE_ROLE_KEY, Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`, 'Content-Type':'application/json' });
