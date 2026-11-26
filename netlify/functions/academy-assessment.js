@@ -13,13 +13,14 @@ exports.handler=async event=>{
  if(typeof input.runId!=='string'||! /^[0-9a-f-]{36}$/i.test(input.runId))return json(400,{error:'Invalid assessment session'});
  const runs=await db('academy_assessment_runs?select=id,level&id=eq.'+input.runId+'&user_id=eq.'+uid);
  if(!runs.length||runs[0].level!==level)return json(400,{error:'Invalid assessment session'});
- await db('rpc/academy_grade_run',{method:'POST',body:JSON.stringify({p_user:user.id,p_run:input.runId,p_answers:input.answers})});
+ try{await db('rpc/academy_grade_run',{method:'POST',body:JSON.stringify({p_user:user.id,p_run:input.runId,p_answers:input.answers})});}catch{return json(409,{error:'Assessment expired, already submitted or invalid; reload to retry'})}
  }else if(input.action!=='load')return json(400,{error:'Invalid action'});
+ if(input.action==='load'){
  questions=await db('academy_questions?select=id,prompt,options,correct_index&level=eq.'+level+'&order=position');
  if(!questions.length)return json(409,{error:'Assessment unavailable'});
  const recent=await db('academy_assessment_runs?select=id&user_id=eq.'+uid+'&created_at=gt.'+encodeURIComponent(new Date(Date.now()-3600000).toISOString())+'&limit=30');
  if(recent.length>=30)return json(429,{error:'Assessment limit reached; try again later'});
- const rows=await db('academy_assessment_runs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({user_id:user.id,level,snapshot:questions})});runId=rows[0].id;
+ const rows=await db('academy_assessment_runs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({user_id:user.id,level,snapshot:questions})});runId=rows[0].id;}else{questions=[];runId=null;}
  const attempts=await db('academy_attempts?select=id,score,passed,submitted_at&user_id=eq.'+uid+'&level=eq.'+level+'&order=submitted_at.desc&limit=100');
  const passed=await db('academy_attempts?select=id&user_id=eq.'+uid+'&level=eq.'+level+'&passed=eq.true&limit=1');
  const modules=await db('academy_modules?select=slug&level=eq.'+level);
