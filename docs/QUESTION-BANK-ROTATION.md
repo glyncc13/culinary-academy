@@ -1,0 +1,4 @@
+# Question bank rotation — launch blocker
+The repository contains historical starter answer keys. Treat them as public even after changing repository visibility. Do not commit replacement questions or answers.
+Before launch: owner makes repository private, reviews history and access, and creates a new reviewed bank offline. Use the MFA-protected administrator interface or an approved private import, with no question payloads in logs or CI artifacts. Validate coverage, three distinct options, correct index, and food safety accuracy. Use an isolated environment first.
+Pause assessment availability during rotation; invalidate unused snapshots containing old questions, preserve completed attempts and certificates. Replace all exposed questions in one reviewed transaction, verify counts and permissions, and reopen only after tests. No hosted changes authorized by this document. A secure bulk rotation tool and assessment pause control are still required.
