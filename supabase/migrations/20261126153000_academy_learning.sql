@@ -78,7 +78,9 @@ declare k text; competent boolean:=true; student uuid;
 begin
 select user_id into student from public.academy_practical_submissions where id=p_id and status='pending' for update;
 if student is null or student=p_actor then raise exception 'review denied'; end if;
-perform 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student for share;
+-- Serialize permission changes with marking without granting assignment UPDATE.
+perform pg_advisory_xact_lock_shared(927351);
+perform 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student;
 if not found then raise exception 'review denied'; end if;
 if exists(select 1 from public.academy_evidence_files where submission_id=p_id and not attached and cancelled_at is null) then raise exception 'evidence upload incomplete'; end if;
 if jsonb_typeof(p_rubric) is distinct from 'object' or char_length(coalesce(p_feedback,'')) not between 1 and 4000 then raise exception 'invalid rubric'; end if;
