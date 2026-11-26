@@ -8,11 +8,31 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22.16.0'
       - run: npm test
       - run: find netlify/functions -name '*.js' -exec node --check {} \;
+      - name: Require committed lockfile
+        run: test -f package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm audit --audit-level=high
+      - run: npm run build
+      - run: git diff --exit-code -- package.json package-lock.json
+  lockfile-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - run: npm install --package-lock-only --ignore-scripts --no-audit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-lockfile-candidate
+          path: package-lock.json
+      - run: npm audit --audit-level=high
