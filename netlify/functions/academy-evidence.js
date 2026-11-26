@@ -21,13 +21,19 @@ const {data,error}=await storage.createSignedUploadUrl(f.object_path,{upsert:fal
 return json(200,{id:f.id,path:f.object_path,token:data.token});
 }
 if(x.action==='list'){
-const rows=await db('academy_evidence_files?select=id,mime&attached=eq.true&submission_id=eq.'+s.id);
+const rows=await db('academy_evidence_files?select=id,mime,attached&submission_id=eq.'+s.id+(owner&&s.status==='pending'?'':'&attached=eq.true'));
 return json(200,{rows});
 }
 if(!uuid(x.id))return json(400,{error:'Invalid file'});
 const f=(await db('academy_evidence_files?select=*&id=eq.'+x.id+'&submission_id=eq.'+s.id))[0];if(!f)return json(404,{error:'Unavailable'});
+if(x.action==='retry'&&owner&&s.status==='pending'&&!f.attached){
+const paid=await db('subscriptions?select=user_id&user_id=eq.'+u.id+'&status=in.(active,trialing)&current_period_end=gt.'+encodeURIComponent(new Date().toISOString())+'&limit=1');
+if(!paid.length)return json(403,{error:'Membership required'});
+const {data,error}=await storage.createSignedUploadUrl(f.object_path,{upsert:false});if(error||!data?.token)throw Error('Upload unavailable');
+return json(200,{id:f.id,path:f.object_path,token:data.token});
+}
 if(x.action==='attach'&&owner&&s.status==='pending'){
-const {data,error}=await storage.info(f.object_path);if(error||!data||data.size<=0||data.size>52428800||data.contentType!==f.mime)throw Error('File verification failed');
+const {data,error}=await storage.info(f.object_path);if(error||!data||!Number.isSafeInteger(data.size)||data.size<=0||data.size>52428800||data.contentType!==f.mime)throw Error('File verification failed');
 await db('rpc/academy_attach_evidence',{method:'POST',body:JSON.stringify({p_user:u.id,p_file:f.id})});return json(200,{ok:true});
 }
 if(x.action==='view'&&f.attached){const {data,error}=await storage.createSignedUrl(f.object_path,120);if(error)throw error;return json(200,{url:data.signedUrl,mime:f.mime});}
