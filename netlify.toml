@@ -1,6 +1,10 @@
+"$schema" = "https://open-api.netlify.com/netlify.schema.json"
+
 [build]
   command = "mkdir -p dist && cp membership.html dist/index.html && cp membership.html dist/membership.html"
   publish = "dist"
   functions = "netlify/functions"
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL"
 [functions]
   node_bundler = "esbuild"
