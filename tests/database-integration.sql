@@ -51,4 +51,27 @@ if has_table_privilege('authenticated','public.academy_admins','insert') or has_
 if not exists(select 1 from storage.buckets where id='academy-videos' and not public) then raise exception 'video bucket not private'; end if;
 end $ci$;
 
+insert into public.academy_admins(user_id) values ('11111111-1111-4111-8111-111111111111');
+insert into public.academy_assessment_runs(user_id,level,snapshot) values ('11111111-1111-4111-8111-111111111111',1,'[]');
+do $rotation$
+declare bank jsonb; original jsonb; attempts_before bigint; certs_before bigint; unused_before bigint; n integer;
+begin
+select jsonb_agg(to_jsonb(q) order by id) into original from public.academy_questions q;
+select count(*) into attempts_before from public.academy_attempts;
+select count(*) into certs_before from public.academy_certificates;
+select count(*) into unused_before from public.academy_assessment_runs where used_at is null;
+select jsonb_agg(jsonb_build_object('level',l,'prompt','Synthetic fixture '||l||'-'||i,'options',jsonb_build_array('A','B','C'),'correct_index',0)) into bank from generate_series(1,3) l cross join generate_series(1,5) i;
+begin
+perform public.academy_rotate_questions('11111111-1111-4111-8111-111111111111',jsonb_set(bank,'{0,correct_index}','9'));
+raise exception 'invalid rotation accepted';
+exception when check_violation then null;
+end;
+if original is distinct from (select jsonb_agg(to_jsonb(q) order by id) from public.academy_questions q) or unused_before<>(select count(*) from public.academy_assessment_runs where used_at is null) then raise exception 'failed rotation altered data'; end if;
+n:=public.academy_rotate_questions('11111111-1111-4111-8111-111111111111',bank);
+if n<>15 or (select count(*) from public.academy_questions)<>15 or exists(select 1 from public.academy_questions where prompt not like 'Synthetic fixture %') then raise exception 'replacement incomplete'; end if;
+if exists(select 1 from public.academy_assessment_runs where used_at is null) or attempts_before<>(select count(*) from public.academy_attempts) or certs_before<>(select count(*) from public.academy_certificates) then raise exception 'history preservation failed'; end if;
+if not exists(select 1 from public.academy_admin_audit a join public.academy_admin_audit b using(request_id) where a.action='rotateQuestions' and a.outcome='attempted' and b.outcome='succeeded') then raise exception 'rotation audit missing'; end if;
+if has_function_privilege('authenticated','public.academy_rotate_questions(uuid,jsonb)','execute') or has_function_privilege('anon','public.academy_acquire_lease(text,uuid)','execute') then raise exception 'privileged RPC exposed'; end if;
+end $rotation$;
+
 rollback;
