@@ -97,13 +97,26 @@ begin perform public.academy_attach_evidence('22222222-2222-4222-8222-2222222222
 if not denied then raise exception 'cross-user attachment accepted'; end if;
 perform public.academy_attach_evidence('11111111-1111-4111-8111-111111111111',fid);
 denied:=false;
+begin perform public.academy_cancel_evidence('11111111-1111-4111-8111-111111111111',sid,fid); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'attached evidence cancelled'; end if;
+select id into fid from public.academy_evidence_files where submission_id=sid and not attached limit 1;
+denied:=false;
+begin perform public.academy_cancel_evidence('22222222-2222-4222-8222-222222222222',sid,fid); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'cross-user cancellation accepted'; end if;
+perform public.academy_cancel_evidence('11111111-1111-4111-8111-111111111111',sid,fid);
+denied:=false;
+begin perform public.academy_attach_evidence('11111111-1111-4111-8111-111111111111',fid); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'cancelled evidence attached'; end if;
+perform public.academy_reserve_evidence('11111111-1111-4111-8111-111111111111',sid,'image/jpeg');
+if has_function_privilege('authenticated','public.academy_cancel_evidence(uuid,uuid,uuid)','execute') then raise exception 'cancellation RPC exposed'; end if;
+denied:=false;
 begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then denied:=true; end;
 if not denied then raise exception 'unallocated marking accepted'; end if;
 perform public.academy_allocate_supervisor('11111111-1111-4111-8111-111111111111','77777777-7777-4777-8777-777777777777','11111111-1111-4111-8111-111111111111');
 denied:=false;
 begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then if sqlerrm='evidence upload incomplete' then denied:=true; else raise; end if; end;
 if not denied then raise exception 'incomplete upload marking accepted'; end if;
-for fid in select id from public.academy_evidence_files where submission_id=sid and not attached loop
+for fid in select id from public.academy_evidence_files where submission_id=sid and not attached and cancelled_at is null loop
 perform public.academy_attach_evidence('11111111-1111-4111-8111-111111111111',fid);
 end loop;
 if public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":1,"preparation":3,"technique":3,"quality":3,"organisation":3,"reflection":3}','Safety revision required') then raise exception 'unsafe practical passed'; end if;
