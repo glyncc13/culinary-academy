@@ -100,6 +100,12 @@ denied:=false;
 begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then denied:=true; end;
 if not denied then raise exception 'unallocated marking accepted'; end if;
 perform public.academy_allocate_supervisor('11111111-1111-4111-8111-111111111111','77777777-7777-4777-8777-777777777777','11111111-1111-4111-8111-111111111111');
+denied:=false;
+begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then if sqlerrm='evidence upload incomplete' then denied:=true; else raise; end if; end;
+if not denied then raise exception 'incomplete upload marking accepted'; end if;
+for fid in select id from public.academy_evidence_files where submission_id=sid and not attached loop
+perform public.academy_attach_evidence('11111111-1111-4111-8111-111111111111',fid);
+end loop;
 if public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":1,"preparation":3,"technique":3,"quality":3,"organisation":3,"reflection":3}','Safety revision required') then raise exception 'unsafe practical passed'; end if;
 if not exists(select 1 from public.academy_practical_submissions where id=sid and status='revise') then raise exception 'revision missing'; end if;
 if public.academy_practical_eligible('11111111-1111-4111-8111-111111111111',1::smallint) then raise exception 'incomplete competency passed'; end if;
