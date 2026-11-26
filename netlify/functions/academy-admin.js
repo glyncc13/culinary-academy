@@ -1,12 +1,13 @@
-const {db,json,currentUser}=require('./_shared');
+const {db,json,currentUser,hasMfa}=require('./_shared');
 const uuid=s=>typeof s==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 exports.handler=async event=>{
  if(event.httpMethod!=='POST')return json(405,{error:'POST required'});
  let user;try{user=await currentUser(event)}catch{return json(401,{error:'Sign in required'})}
  try{
  if(!(await db('academy_admins?select=user_id&user_id=eq.'+encodeURIComponent(user.id))).length)return json(403,{error:'Administrator access required'});
+ if(!await hasMfa(event,user))return json(403,{error:'Administrator MFA required'});
  const x=JSON.parse(event.body||'{}');
- const reads={modules:'academy_modules?select=slug,level,title,position&order=level,position',pathways:'academy_pathways?select=level,title,description&order=level',notes:'academy_student_notes?select=user_id,note,updated_at&limit=200',students:'academy_progress?select=user_id,lesson_id,completed_at&order=completed_at.desc&limit=200',courses:'lessons?select=id,title,category,description,steps,status&order=title&limit=200',assessments:'academy_questions?select=id,level,prompt,options,correct_index,position&order=level,position&limit=200',certificates:'academy_certificates?select=id,user_id,level,recipient_name,issued_at,revoked_at&order=issued_at.desc&limit=200',subscriptions:'subscriptions?select=user_id,status,current_period_end,cancel_at_period_end&limit=200',reporting:'academy_attempts?select=user_id,level,score,passed,submitted_at&order=submitted_at.desc&limit=200',audit:'academy_admin_audit?select=actor,action,target,created_at&order=created_at.desc&limit=200'};
+ const reads={privacy:'academy_privacy_requests?select=id,user_id,kind,created_at,status&order=created_at.desc&limit=200',modules:'academy_modules?select=slug,level,title,position&order=level,position',pathways:'academy_pathways?select=level,title,description&order=level',notes:'academy_student_notes?select=user_id,note,updated_at&limit=200',students:'academy_progress?select=user_id,lesson_id,completed_at&order=completed_at.desc&limit=200',courses:'lessons?select=id,title,category,description,steps,status&order=title&limit=200',assessments:'academy_questions?select=id,level,prompt,options,correct_index,position&order=level,position&limit=200',certificates:'academy_certificates?select=id,user_id,level,recipient_name,issued_at,revoked_at&order=issued_at.desc&limit=200',subscriptions:'subscriptions?select=user_id,status,current_period_end,cancel_at_period_end&limit=200',reporting:'academy_attempts?select=user_id,level,score,passed,submitted_at&order=submitted_at.desc&limit=200',audit:'academy_admin_audit?select=actor,action,target,created_at&order=created_at.desc&limit=200'};
  if(Object.hasOwn(reads,x.action))return json(200,{rows:await db(reads[x.action])});
  const str=(v,max)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
  const audit=async target=>db('academy_admin_audit',{method:'POST',body:JSON.stringify({actor:user.id,action:x.action,target})});
