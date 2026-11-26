@@ -55,7 +55,7 @@ jobs:
           done
       - run: psql -v ON_ERROR_STOP=1 -f tests/database-integration.sql
   browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
