@@ -1,5 +1,5 @@
 create table public.academy_curriculum_drafts (
- lesson_id uuid primary key references public.lessons(id), content jsonb not null, imported_at timestamptz not null default now()
+ lesson_id uuid primary key references public.lessons(id), content jsonb not null, approved boolean not null default false, imported_at timestamptz not null default now()
 );
 create table public.academy_practical_submissions (
  id uuid primary key default gen_random_uuid(), user_id uuid not null references auth.users(id), lesson_id uuid not null references public.lessons(id),
@@ -32,7 +32,7 @@ for r in select value from jsonb_array_elements(p_rows) loop
  if not exists(select 1 from public.academy_module_lessons where lesson_id=lid and module_slug=r->>'module') then
  insert into public.academy_module_lessons(module_slug,lesson_id,position) values(r->>'module',lid,coalesce((select max(position) from public.academy_module_lessons where module_slug=r->>'module'),0)+1);
  end if;
- insert into public.academy_curriculum_drafts(lesson_id,content) values(lid,r) on conflict(lesson_id) do update set content=excluded.content,imported_at=now();
+ insert into public.academy_curriculum_drafts(lesson_id,content) values(lid,r) on conflict(lesson_id) do update set content=excluded.content,approved=false,imported_at=now();
  end if;
 end loop;
 if not p_preview then insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,'importCurriculum','50 drafts',rid,'succeeded'); end if;
@@ -55,3 +55,13 @@ return true;
 end $review$;
 revoke all on function public.academy_import_curriculum(uuid,jsonb,boolean),public.academy_submit_practical(uuid,uuid,text),public.academy_review_practical(uuid,uuid,text,text) from public,anon,authenticated;
 grant execute on function public.academy_import_curriculum(uuid,jsonb,boolean),public.academy_submit_practical(uuid,uuid,text),public.academy_review_practical(uuid,uuid,text,text) to service_role;
+create function public.academy_approve_curriculum(p_actor uuid,p_lesson uuid) returns boolean language plpgsql security invoker set search_path='' as $approve$
+begin
+if not exists(select 1 from public.academy_admins where user_id=p_actor) then raise exception 'admin required'; end if;
+update public.academy_curriculum_drafts set approved=true where lesson_id=p_lesson;
+if not found then raise exception 'draft unavailable'; end if;
+insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,'approveCurriculum',p_lesson::text,gen_random_uuid(),'succeeded');
+return true;
+end $approve$;
+revoke all on function public.academy_approve_curriculum(uuid,uuid) from public,anon,authenticated;
+grant execute on function public.academy_approve_curriculum(uuid,uuid) to service_role;
