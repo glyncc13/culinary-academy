@@ -4,6 +4,7 @@ const bank=[...require('../../curriculum/level-1.json'),...require('../../curric
 exports.handler=async event=>{
  if(event.httpMethod!=='POST')return json(405,{error:'POST required'});
  let u;try{u=await currentUser(event)}catch{return json(401,{error:'Sign in required'})}
+ if(!u?.id)return json(401,{error:'Sign in required'});
  try{
  if((event.body||'').length>20000)return json(413,{error:'Request too large'});
  const x=JSON.parse(event.body||'{}');
@@ -39,8 +40,7 @@ exports.handler=async event=>{
  if(x.action==='approve'&&uuid(x.lesson_id)&&x.confirm==='REVIEWED')return json(200,{ok:await rpc('academy_approve_curriculum',{p_actor:u.id,p_lesson:x.lesson_id})});
  if(x.action==='review')return json(403,{error:'Use assigned supervisor rubric'});
  if(x.action==='queue')return json(200,{rows:await db('academy_practical_submissions?select=*&status=eq.pending&order=created_at.asc&limit=100')});
- if(!uuid(x.id)||!['competent','revise'].includes(x.status)||typeof x.feedback!=='string'||!x.feedback.trim()||x.feedback.length>4000)return json(400,{error:'Invalid review'});
- return json(200,{ok:await rpc('academy_review_practical',{p_actor:u.id,p_id:x.id,p_status:x.status,p_feedback:x.feedback.trim()})});
+ return json(400,{error:'Invalid administrator operation'});
  }
  if(x.action==='content'&&uuid(x.lesson_id)){
  const paid=await db('subscriptions?select=user_id&user_id=eq.'+u.id+'&status=in.(active,trialing)&current_period_end=gt.'+encodeURIComponent(new Date().toISOString())+'&limit=1');
