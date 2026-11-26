@@ -92,3 +92,10 @@ throw Error('Unexpected query');
 const results=await Promise.all([handler(event({level:1,name:'First Student',consent:true})),handler(event({level:1,name:'Second Student',consent:true}))]);
 assert.equal(attempts,2);assert.equal(results[0].statusCode,200);assert.equal(results[1].statusCode,200);assert.equal(results[0].body,results[1].body);
 });
+
+ test('certificate rejects malformed requests before accessing student records',async()=>{
+ for(const [user,body,status] of [[null,'{}',401],[{id:'u'},'{',400],[{id:'u'},'null',400],[{id:'u'},'[]',400],[{id:'u'},' '.repeat(4097),413],[{id:'u'},'{"level":4}',400]]){
+ const handler=load('academy-certificate',{json,currentUser:async()=>user,db:async()=>{assert.fail('Unexpected database access')}});
+ assert.equal((await handler({httpMethod:'POST',body})).statusCode,status);
+ }
+ });
