@@ -8,14 +8,18 @@ exports.handler=async event=>{
  const uid=encodeURIComponent(user.id);
  const active=await db('subscriptions?select=user_id&user_id=eq.'+uid+'&status=in.(active,trialing)&current_period_end=gt.'+encodeURIComponent(new Date().toISOString())+'&limit=1');
  if(!active.length)return json(403,{error:'Active membership required'});
- const questions=await db('academy_questions?select=id,prompt,options,correct_index&level=eq.'+level+'&order=position');
- if(!questions.length)return json(409,{error:'Assessment unavailable'});
+ let questions,runId;
  if(input.action==='submit'){
- const a=input.answers;
- if(!a||typeof a!=='object'||Array.isArray(a)||Object.keys(a).length!==questions.length||questions.some(q=>!Number.isInteger(a[q.id])||a[q.id]<0||a[q.id]>=q.options.length))return json(400,{error:'Answer every question'});
- const score=Math.floor(100*questions.filter(q=>a[q.id]===q.correct_index).length/questions.length);
- await db('academy_attempts',{method:'POST',body:JSON.stringify({user_id:user.id,level,score})});
+ if(typeof input.runId!=='string'||! /^[0-9a-f-]{36}$/i.test(input.runId))return json(400,{error:'Invalid assessment session'});
+ const runs=await db('academy_assessment_runs?select=id,level&id=eq.'+input.runId+'&user_id=eq.'+uid);
+ if(!runs.length||runs[0].level!==level)return json(400,{error:'Invalid assessment session'});
+ await db('rpc/academy_grade_run',{method:'POST',body:JSON.stringify({p_user:user.id,p_run:input.runId,p_answers:input.answers})});
  }else if(input.action!=='load')return json(400,{error:'Invalid action'});
+ questions=await db('academy_questions?select=id,prompt,options,correct_index&level=eq.'+level+'&order=position');
+ if(!questions.length)return json(409,{error:'Assessment unavailable'});
+ const recent=await db('academy_assessment_runs?select=id&user_id=eq.'+uid+'&created_at=gt.'+encodeURIComponent(new Date(Date.now()-3600000).toISOString())+'&limit=30');
+ if(recent.length>=30)return json(429,{error:'Assessment limit reached; try again later'});
+ const rows=await db('academy_assessment_runs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({user_id:user.id,level,snapshot:questions})});runId=rows[0].id;
  const attempts=await db('academy_attempts?select=id,score,passed,submitted_at&user_id=eq.'+uid+'&level=eq.'+level+'&order=submitted_at.desc&limit=100');
  const passed=await db('academy_attempts?select=id&user_id=eq.'+uid+'&level=eq.'+level+'&passed=eq.true&limit=1');
  const modules=await db('academy_modules?select=slug&level=eq.'+level);
@@ -26,6 +30,6 @@ exports.handler=async event=>{
  const required=links.filter(x=>modules.some(m=>m.slug===x.module_slug)&&available.has(x.lesson_id));
  const progress=await db('academy_progress?select=lesson_id&user_id=eq.'+uid);
  const eligible=modules.length>0&&modules.every(m=>required.some(x=>x.module_slug===m.slug))&&required.every(x=>progress.some(p=>p.lesson_id===x.lesson_id))&&passed.length>0;
- return json(200,{questions:questions.map(({id,prompt,options})=>({id,prompt,options})),attempts,eligible});
+ return json(200,{runId,questions:questions.map(({id,prompt,options})=>({id,prompt,options})),attempts,eligible});
  }catch(e){return json(500,{error:'Assessment service unavailable'})}
 };
