@@ -1,4 +1,14 @@
 # Privacy notice — draft, not for publication
+
+## Proposed business details — 26 November 2026
+- Trading name: Culinary Academy (proposed; legal identity not confirmed).
+- Legal structure: undecided.
+- Support email: undecided.
+- Website domain: undecided.
+- Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
+
+Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
+
 Controller: [legal name, address, privacy email]. Effective date: [date].
 We collect account email and authentication records, subscription references, lesson progress, assessment answers/results, certificate name and issue details, security logs, support requests and necessary administrator notes. We receive subscription status from Stripe.
 Service delivery and billing: contract; accounting and statutory obligations: legal obligation; security and fraud prevention: legitimate interests subject to documented assessment. Optional marketing requires an appropriate separate basis. No marketing tracking assumed.
