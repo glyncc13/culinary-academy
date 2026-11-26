@@ -60,3 +60,18 @@ assert.equal(patches,mode==='success'?1:0);
 if(mode==='disabled')assert.equal(queries,0);
 }
 });
+
+test('learning rejects missing identity before database access',async()=>{
+const handler=load('academy-learning',{json,currentUser:async()=>null,db:async()=>{assert.fail('Unexpected database access')}});
+assert.equal((await handler(event({action:'mine'}))).statusCode,401);
+});
+test('invalid administrator approval cannot fall through to legacy marking',async()=>{
+let writes=0;const handler=load('academy-learning',{json,currentUser:async()=>({id:'admin'}),hasMfa:async()=>true,db:async p=>{if(p.startsWith('academy_admins'))return [{}];writes++;return true}});
+const id='12345678-1234-1234-1234-123456789abc';
+assert.equal((await handler(event({action:'approve',id,status:'competent',feedback:'Legacy bypass attempt'}))).statusCode,400);
+assert.equal((await handler(event({action:'review',id,status:'competent',feedback:'Legacy bypass attempt'}))).statusCode,403);
+assert.equal(writes,0);
+});
+test('supervisor permission changes require MFA and explicit confirmation',async()=>{
+const id='12345678-1234-1234-1234-123456789abc';for(const mfa of [false,true]){let writes=0;const handler=load('academy-learning',{json,currentUser:async()=>({id:'admin'}),hasMfa:async()=>mfa,db:async(p,o)=>{if(p.startsWith('academy_admins'))return [{}];assert.equal(p,'rpc/academy_change_supervisor');assert.equal(JSON.parse(o.body).p_actor,'admin');writes++;return true}});assert.equal((await handler(event({action:'changeSupervisor',operation:'revoke',supervisor_id:id}))).statusCode,mfa?400:403);assert.equal((await handler(event({action:'changeSupervisor',operation:'revoke',supervisor_id:id,confirm:'REVOKE'}))).statusCode,mfa?200:403);assert.equal(writes,mfa?1:0)}
+});
