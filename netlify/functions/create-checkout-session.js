@@ -13,7 +13,7 @@ exports.handler=async(event)=>{
    customerId=saved[0].stripe_customer_id;
   }
   const existing=await stripe.subscriptions.list({customer:customerId,status:'all',limit:100});if(existing.has_more||existing.data.some(s=>['active','trialing','past_due','unpaid','incomplete','paused'].includes(s.status)))return json(409,{error:'Existing subscription; use billing portal.'});
-  const open=await stripe.checkout.sessions.list({customer:customerId,status:'open',limit:100});const reusable=open.data.find(s=>s.mode==='subscription'&&s.url);if(reusable)return json(200,{url:reusable.url});
+  const open=await stripe.checkout.sessions.list({customer:customerId,status:'open',limit:100});for(const s of open.data){if(s.mode!=='subscription'||!s.url||s.client_reference_id!==user.id)continue;const items=await stripe.checkout.sessions.listLineItems(s.id,{limit:2});if(!items.has_more&&items.data.length===1&&items.data[0].price?.id===process.env.STRIPE_MONTHLY_PRICE_ID&&items.data[0].quantity===1)return json(200,{url:s.url});}if(open.has_more)return json(409,{error:'Too many open checkout sessions; contact support.'});
   const session=await stripe.checkout.sessions.create({mode:'subscription',customer:customerId,line_items:[{price:process.env.STRIPE_MONTHLY_PRICE_ID,quantity:1}],client_reference_id:user.id,subscription_data:{metadata:{supabase_user_id:user.id}},success_url:`${site()}/membership.html?billing=success`,cancel_url:`${site()}/membership.html?billing=cancelled`},{idempotencyKey:'academy-checkout-'+user.id+'-'+Math.floor(Date.now()/60000)});
   return json(200,{url:session.url});
  }catch(e){console.error('Checkout error');return json(400,{error:'Unable to start checkout. Check configuration and sign-in.'});}
