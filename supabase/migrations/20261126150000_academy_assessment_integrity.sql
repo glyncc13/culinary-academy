@@ -1,6 +1,7 @@
 create function public.academy_start_run(p_user uuid,p_level smallint) returns jsonb language plpgsql security invoker set search_path='' as $ci$
 declare snapshot jsonb; rid uuid;
 begin
+lock table public.academy_questions in share mode;
 perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_user::text,0));
 if not exists(select 1 from public.subscriptions where user_id=p_user and status in ('active','trialing') and current_period_end>now()) then return null; end if;
 if (select count(*) from public.academy_assessment_runs where user_id=p_user and created_at>now()-interval '1 hour')>=30 then return null; end if;
