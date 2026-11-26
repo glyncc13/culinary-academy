@@ -65,3 +65,35 @@ return true;
 end $approve$;
 revoke all on function public.academy_approve_curriculum(uuid,uuid) from public,anon,authenticated;
 grant execute on function public.academy_approve_curriculum(uuid,uuid) to service_role;
+
+create table public.academy_supervisors(user_id uuid primary key references auth.users(id));
+create table public.academy_supervisor_students(supervisor_id uuid references public.academy_supervisors(user_id),student_id uuid references auth.users(id),primary key(supervisor_id,student_id),check(supervisor_id<>student_id));
+alter table public.academy_supervisors enable row level security;
+alter table public.academy_supervisor_students enable row level security;
+revoke all on public.academy_supervisors,public.academy_supervisor_students from public,anon,authenticated;
+grant select,insert,delete on public.academy_supervisors,public.academy_supervisor_students to service_role;
+alter table public.academy_practical_submissions add column rubric jsonb;
+create function public.academy_mark_practical(p_actor uuid,p_id uuid,p_rubric jsonb,p_feedback text) returns boolean language plpgsql security invoker set search_path='' as $mark$
+declare k text; competent boolean:=true; student uuid;
+begin
+select user_id into student from public.academy_practical_submissions where id=p_id and status='pending' for update;
+if student is null or student=p_actor or not exists(select 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student) then raise exception 'review denied'; end if;
+if jsonb_typeof(p_rubric) is distinct from 'object' or char_length(coalesce(p_feedback,'')) not between 1 and 4000 then raise exception 'invalid rubric'; end if;
+foreach k in array array['safety','preparation','technique','quality','organisation','reflection'] loop
+if coalesce(p_rubric->>k,'') not in ('0','1','2','3') then raise exception 'invalid score'; end if;
+if (p_rubric->>k)::integer<2 then competent:=false; end if;
+end loop;
+update public.academy_practical_submissions set rubric=p_rubric,status=case when competent then 'competent' else 'revise' end,reviewer=p_actor,feedback=p_feedback,reviewed_at=now() where id=p_id;
+insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,'markPractical',p_id::text,gen_random_uuid(),'succeeded');
+return competent;
+end $mark$;
+revoke all on function public.academy_mark_practical(uuid,uuid,jsonb,text) from public,anon,authenticated;
+grant execute on function public.academy_mark_practical(uuid,uuid,jsonb,text) to service_role;
+revoke execute on function public.academy_review_practical(uuid,uuid,text,text) from service_role;
+create function public.academy_practical_eligible(p_user uuid,p_level smallint) returns boolean language sql security invoker set search_path='' as $eligible$
+select exists(select 1 from public.academy_modules where level=p_level) and not exists(
+select 1 from public.academy_modules m where m.level=p_level and not exists(
+select 1 from public.academy_module_lessons ml join public.lessons l on l.id=ml.lesson_id join public.academy_catalogue c on c.lesson_id=l.id join public.academy_practical_submissions s on s.lesson_id=l.id where ml.module_slug=m.slug and l.status='published' and s.user_id=p_user and s.status='competent' and s.rubric is not null));
+$eligible$;
+revoke all on function public.academy_practical_eligible(uuid,smallint) from public,anon,authenticated;
+grant execute on function public.academy_practical_eligible(uuid,smallint) to service_role;
