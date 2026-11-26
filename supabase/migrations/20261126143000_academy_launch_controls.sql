@@ -1,0 +1,22 @@
+create table public.academy_assessment_runs(id uuid primary key default gen_random_uuid(),user_id uuid not null references auth.users(id),level smallint not null references public.academy_pathways(level),snapshot jsonb not null,created_at timestamptz not null default now(),used_at timestamptz);
+alter table public.academy_assessment_runs enable row level security;
+revoke all on public.academy_assessment_runs from public,anon,authenticated;
+grant select,insert,update on public.academy_assessment_runs to service_role;
+alter table public.academy_attempts add column run_id uuid unique references public.academy_assessment_runs(id);
+create function public.academy_grade_run(p_user uuid,p_run uuid,p_answers jsonb) returns integer language plpgsql security invoker set search_path='' as $$ declare r public.academy_assessment_runs%rowtype; n integer; correct integer; result integer; begin
+select * into strict r from public.academy_assessment_runs where id=p_run and user_id=p_user and used_at is null and created_at>now()-interval '2 hours' for update;
+if not exists(select 1 from public.subscriptions where user_id=p_user and status in ('active','trialing') and current_period_end>now()) then raise exception 'membership required'; end if;
+if jsonb_typeof(p_answers) is distinct from 'object' then raise exception 'invalid answers'; end if;
+n:=jsonb_array_length(r.snapshot);
+if n=0 or (select count(*) from jsonb_object_keys(p_answers))<>n or exists(select 1 from jsonb_array_elements(r.snapshot) q where coalesce(p_answers->(q->>'id'),'null'::jsonb) not in ('0'::jsonb,'1'::jsonb,'2'::jsonb)) then raise exception 'invalid answers'; end if;
+select count(*) into correct from jsonb_array_elements(r.snapshot) q where p_answers->(q->>'id')=q->'correct_index';
+result:=100*correct/n;
+insert into public.academy_attempts(user_id,level,score,run_id) values(p_user,r.level,result,r.id);
+update public.academy_assessment_runs set used_at=now() where id=r.id;
+return result; end $$;
+revoke all on function public.academy_grade_run(uuid,uuid,jsonb) from public,anon,authenticated;
+grant execute on function public.academy_grade_run(uuid,uuid,jsonb) to service_role;
+create table public.academy_privacy_requests(id uuid primary key default gen_random_uuid(),user_id uuid not null references auth.users(id),kind text not null check(kind in ('access','erasure','rectification','restriction','objection','portability')),created_at timestamptz not null default now(),status text not null default 'pending');
+alter table public.academy_privacy_requests enable row level security;
+revoke all on public.academy_privacy_requests from public,anon,authenticated;
+grant select,insert,update on public.academy_privacy_requests to service_role;
