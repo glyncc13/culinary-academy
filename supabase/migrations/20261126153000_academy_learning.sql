@@ -119,3 +119,23 @@ return to_jsonb(f);
 end $reserve$;
 revoke all on function public.academy_reserve_evidence(uuid,uuid,text) from public,anon,authenticated;
 grant execute on function public.academy_reserve_evidence(uuid,uuid,text) to service_role;
+
+create function public.academy_attach_evidence(p_user uuid,p_file uuid) returns boolean language plpgsql security invoker set search_path='' as $attach$
+begin
+perform 1 from public.academy_practical_submissions s join public.academy_evidence_files f on f.submission_id=s.id where f.id=p_file and s.user_id=p_user and s.status='pending' for update of s;
+if not found then raise exception 'attachment denied'; end if;
+update public.academy_evidence_files set attached=true where id=p_file;
+return true;
+end $attach$;
+revoke all on function public.academy_attach_evidence(uuid,uuid) from public,anon,authenticated;
+grant execute on function public.academy_attach_evidence(uuid,uuid) to service_role;
+create function public.academy_allocate_supervisor(p_actor uuid,p_supervisor uuid,p_student uuid) returns boolean language plpgsql security invoker set search_path='' as $allocation$
+begin
+if not exists(select 1 from public.academy_admins where user_id=p_actor) or p_supervisor=p_student then raise exception 'allocation denied'; end if;
+insert into public.academy_supervisors(user_id) values(p_supervisor) on conflict do nothing;
+insert into public.academy_supervisor_students(supervisor_id,student_id) values(p_supervisor,p_student) on conflict do nothing;
+insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,'allocateSupervisor',p_supervisor::text||':'||p_student::text,gen_random_uuid(),'succeeded');
+return true;
+end $allocation$;
+revoke all on function public.academy_allocate_supervisor(uuid,uuid,uuid) from public,anon,authenticated;
+grant execute on function public.academy_allocate_supervisor(uuid,uuid,uuid) to service_role;
