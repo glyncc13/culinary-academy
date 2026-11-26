@@ -80,6 +80,7 @@ select user_id into student from public.academy_practical_submissions where id=p
 if student is null or student=p_actor then raise exception 'review denied'; end if;
 perform 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student for share;
 if not found then raise exception 'review denied'; end if;
+if exists(select 1 from public.academy_evidence_files where submission_id=p_id and not attached) then raise exception 'evidence upload incomplete'; end if;
 if jsonb_typeof(p_rubric) is distinct from 'object' or char_length(coalesce(p_feedback,'')) not between 1 and 4000 then raise exception 'invalid rubric'; end if;
 if (select count(*) from jsonb_object_keys(p_rubric))<>6 then raise exception 'invalid rubric keys'; end if;
 foreach k in array array['safety','preparation','technique','quality','organisation','reflection'] loop
