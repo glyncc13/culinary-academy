@@ -15,7 +15,11 @@ exports.handler=async event=>{
  }
  if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
  let user;try{user=await currentUser(event)}catch{return json(401,{error:'Sign in required'})}
- const input=JSON.parse(event.body||'{}'),level=input.level;if(![1,2,3].includes(level))return json(400,{error:'Invalid level'});
+ if(!user?.id)return json(401,{error:'Sign in required'});
+ if((event.body||'').length>4096)return json(413,{error:'Request too large'});
+ let input;try{input=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}
+ if(!input||typeof input!=='object'||Array.isArray(input))return json(400,{error:'Invalid request'});
+ const level=input.level;if(![1,2,3].includes(level))return json(400,{error:'Invalid level'});
  const uid=encodeURIComponent(user.id),path='academy_certificates?user_id=eq.'+uid+'&level=eq.'+level;
  let c=(await db(path))[0];
  if(!c){
