@@ -1,0 +1,543 @@
+[
+  {
+    "level": 1,
+    "module": "hygiene",
+    "title": "Kitchen hygiene fundamentals",
+    "objectives": [
+      "Identify contamination hazards and safe working habits"
+    ],
+    "equipment": [
+      "Handwash basin",
+      "soap",
+      "disposable towels",
+      "apron"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Inspect your uniform and cover cuts with suitable waterproof dressings",
+      "Wash hands thoroughly with soap and running water, including thumbs and fingertips, then dry",
+      "Identify raw and ready-to-eat work zones",
+      "Check the station before beginning and report hazards"
+    ],
+    "commonMistakes": [
+      "Using gloves instead of washing hands",
+      "touching phones during preparation"
+    ],
+    "practical": "Demonstrate a safe station setup",
+    "knowledgeChecks": [
+      "When must hands be washed?",
+      "Why are gloves not a substitute?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "hygiene",
+    "title": "Preventing cross-contamination",
+    "objectives": [
+      "Separate raw and ready-to-eat food"
+    ],
+    "equipment": [
+      "Separate boards",
+      "utensils",
+      "sanitiser",
+      "labels"
+    ],
+    "ingredients": "Raw and ready-to-eat mock ingredients",
+    "method": [
+      "Plan separate storage with raw food below ready-to-eat food",
+      "Allocate dedicated equipment",
+      "Prepare ready-to-eat items away from raw food",
+      "Clean and disinfect surfaces according to product instructions",
+      "Report suspected contamination and isolate affected food"
+    ],
+    "commonMistakes": [
+      "Reusing raw-food tongs",
+      "wiping instead of disinfecting"
+    ],
+    "practical": "Map contamination routes on a mock station",
+    "knowledgeChecks": [
+      "Why store raw food below cooked food?",
+      "What should happen to contaminated salad?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "hygiene",
+    "title": "Personal hygiene and illness reporting",
+    "objectives": [
+      "Recognise illness and reporting duties"
+    ],
+    "equipment": [
+      "Handwash station",
+      "uniform",
+      "reporting form"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Check fitness for work before entering kitchen",
+      "Report vomiting or diarrhoea immediately and follow exclusion policy, normally at least 48 hours after symptoms stop",
+      "Remove jewellery according to policy and secure hair",
+      "Demonstrate handwashing",
+      "Discuss return to work with manager"
+    ],
+    "commonMistakes": [
+      "Working while symptomatic",
+      "concealing illness"
+    ],
+    "practical": "Role-play reporting illness and demonstrate handwashing",
+    "knowledgeChecks": [
+      "Who must be told about symptoms?",
+      "When can food handling resume?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "hygiene",
+    "title": "Temperature monitoring",
+    "objectives": [
+      "Measure core temperature and interpret limits"
+    ],
+    "equipment": [
+      "Calibrated probe",
+      "disinfectant wipes",
+      "log"
+    ],
+    "ingredients": "Supervised cooked food",
+    "method": [
+      "Verify probe accuracy by approved procedure",
+      "Clean and disinfect probe",
+      "Measure thickest part away from bone",
+      "Compare with validated limit such as 70°C for 2 minutes or equivalent",
+      "Record result and isolate or continue cooking if required",
+      "Clean probe again"
+    ],
+    "commonMistakes": [
+      "Measuring surface only",
+      "recording a guessed value"
+    ],
+    "practical": "Complete three supervised temperature records",
+    "knowledgeChecks": [
+      "Why check the thickest part?",
+      "What action follows a failed check?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "hygiene",
+    "title": "Cleaning and disinfection",
+    "objectives": [
+      "Distinguish soil removal and microbial control"
+    ],
+    "equipment": [
+      "Approved chemicals",
+      "cloths",
+      "PPE",
+      "schedule"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Remove food and debris",
+      "Wash with suitable detergent",
+      "Rinse if instructed",
+      "Apply approved disinfectant at specified dilution and contact time",
+      "Rinse if label requires and air dry",
+      "Record completion"
+    ],
+    "commonMistakes": [
+      "Mixing chemicals",
+      "shortening contact time"
+    ],
+    "practical": "Write and demonstrate a cleaning schedule",
+    "knowledgeChecks": [
+      "Why clean before disinfecting?",
+      "Where is contact time specified?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "knife-skills",
+    "title": "Knife skills and safety",
+    "objectives": [
+      "Use a stable board and controlled grip"
+    ],
+    "equipment": [
+      "Chef knife",
+      "board",
+      "nonslip mat"
+    ],
+    "ingredients": "Carrot, cucumber",
+    "method": [
+      "Secure board",
+      "Inspect knife",
+      "Grip handle securely and curl guiding fingertips",
+      "Cut slowly using controlled strokes",
+      "Place knife safely when not in use",
+      "Wash separately and store securely"
+    ],
+    "commonMistakes": [
+      "Catching a falling knife",
+      "leaving knives in sinks"
+    ],
+    "practical": "Demonstrate safe slicing under supervision",
+    "knowledgeChecks": [
+      "Why stabilise the board?",
+      "What should you do if a knife falls?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "knife-skills",
+    "title": "Precision vegetable cuts",
+    "objectives": [
+      "Produce consistent julienne, baton and dice"
+    ],
+    "equipment": [
+      "Chef knife",
+      "board",
+      "ruler"
+    ],
+    "ingredients": "Carrots, potatoes",
+    "method": [
+      "Wash and trim produce",
+      "Square off a stable face",
+      "Cut even slabs then batons",
+      "Cut batons into dice",
+      "Compare dimensions and reserve suitable trim"
+    ],
+    "commonMistakes": [
+      "Rushing",
+      "cutting unstable round produce"
+    ],
+    "practical": "Produce three uniform cuts and compare cooking consistency",
+    "knowledgeChecks": [
+      "Why do uniform cuts cook evenly?",
+      "How can trim be used?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "knife-skills",
+    "title": "Knife selection and maintenance",
+    "objectives": [
+      "Select and maintain suitable knives"
+    ],
+    "equipment": [
+      "Chef knife",
+      "paring knife",
+      "bread knife",
+      "approved sharpener"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Inspect handles and blades",
+      "Match knife to task",
+      "Carry point down at side following workplace policy",
+      "Practise sharpening only with trained supervision",
+      "Clean and dry before secure storage"
+    ],
+    "commonMistakes": [
+      "Using damaged handles",
+      "testing sharpness with fingers"
+    ],
+    "practical": "Identify knives and demonstrate safe storage",
+    "knowledgeChecks": [
+      "Which knife suits bread?",
+      "Why remove damaged knives from use?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "knife-skills",
+    "title": "Vegetable preparation and yield",
+    "objectives": [
+      "Calculate usable yield"
+    ],
+    "equipment": [
+      "Scales",
+      "peeler",
+      "knife",
+      "bowls"
+    ],
+    "ingredients": "500 g carrots",
+    "method": [
+      "Weigh untrimmed vegetables",
+      "Wash and remove unsuitable parts",
+      "Peel only as needed",
+      "Weigh usable portion",
+      "Calculate usable weight divided by purchase weight times 100",
+      "Record trim separately"
+    ],
+    "commonMistakes": [
+      "Over-peeling",
+      "mixing waste and usable trim"
+    ],
+    "practical": "Compare two preparation methods and calculate yield",
+    "knowledgeChecks": [
+      "What is yield from 400 g usable out of 500 g?",
+      "Why track trim?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "preparation",
+    "title": "Mise en place",
+    "objectives": [
+      "Organise ingredients and tools before cooking"
+    ],
+    "equipment": [
+      "Recipe",
+      "trays",
+      "labels",
+      "scales"
+    ],
+    "ingredients": "Ingredients for chosen recipe",
+    "method": [
+      "Read recipe fully",
+      "Check portions and allergens",
+      "Gather clean equipment",
+      "Weigh and prepare ingredients in order",
+      "Label and store safely",
+      "Confirm station readiness"
+    ],
+    "commonMistakes": [
+      "Starting before reading recipe",
+      "leaving chilled ingredients out"
+    ],
+    "practical": "Set up a supervised soup station",
+    "knowledgeChecks": [
+      "What does mise en place achieve?",
+      "Which ingredients need refrigeration?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "preparation",
+    "title": "Planning a preparation list",
+    "objectives": [
+      "Prioritise dependent tasks"
+    ],
+    "equipment": [
+      "Prep sheet",
+      "timer",
+      "recipe cards"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Forecast covers",
+      "Calculate required portions",
+      "List tasks and dependencies",
+      "Schedule long cooking and cooling tasks first",
+      "Assign responsibilities",
+      "Check progress before service"
+    ],
+    "commonMistakes": [
+      "Ignoring cooling time",
+      "overproduction"
+    ],
+    "practical": "Create a prep list for 20 covers",
+    "knowledgeChecks": [
+      "Why schedule dependent tasks first?",
+      "How can waste be reduced?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "preparation",
+    "title": "Weighing and recipe scaling",
+    "objectives": [
+      "Scale recipes accurately"
+    ],
+    "equipment": [
+      "Scales",
+      "jug",
+      "calculator"
+    ],
+    "ingredients": "400 g vegetables, 200 g rice, 600 ml stock for four portions",
+    "method": [
+      "Divide six target portions by four original portions",
+      "Multiply each quantity by 1.5",
+      "Tare scales before weighing",
+      "Measure 600 g vegetables, 300 g rice and 900 ml stock",
+      "Check pan capacity and adjust cooking process separately"
+    ],
+    "commonMistakes": [
+      "Confusing grams and millilitres",
+      "scaling cooking time blindly"
+    ],
+    "practical": "Scale a second recipe and verify weights",
+    "knowledgeChecks": [
+      "What is the scaling factor from four to six?",
+      "Why tare scales?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "preparation",
+    "title": "Receiving and storing ingredients",
+    "objectives": [
+      "Check deliveries and rotate stock"
+    ],
+    "equipment": [
+      "Delivery checklist",
+      "probe",
+      "labels"
+    ],
+    "ingredients": "Mock chilled and dry goods",
+    "method": [
+      "Compare delivery with order",
+      "Check packaging, dates and temperatures against policy",
+      "Reject or quarantine unsuitable goods",
+      "Store promptly in correct zones",
+      "Rotate by earliest expiry and record checks"
+    ],
+    "commonMistakes": [
+      "Accepting damaged packs",
+      "relying only on arrival order"
+    ],
+    "practical": "Inspect a mock delivery and record rejection reasons",
+    "knowledgeChecks": [
+      "What makes a delivery unacceptable?",
+      "Why use earliest expiry first?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "cooking-methods",
+    "title": "Essential cooking methods",
+    "objectives": [
+      "Compare moist and dry heat"
+    ],
+    "equipment": [
+      "Saucepan",
+      "steamer",
+      "oven tray",
+      "probe"
+    ],
+    "ingredients": "Carrots, potatoes, oil",
+    "method": [
+      "Prepare equal portions",
+      "Boil one portion and steam another",
+      "Roast a third with a little oil",
+      "Check tenderness and safe handling",
+      "Compare colour, moisture and flavour"
+    ],
+    "commonMistakes": [
+      "Overcrowding trays",
+      "uneven cuts"
+    ],
+    "practical": "Compare three methods using identical vegetables",
+    "knowledgeChecks": [
+      "Which method encourages browning?",
+      "Why cut evenly?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "cooking-methods",
+    "title": "Egg cookery",
+    "objectives": [
+      "Control coagulation and texture"
+    ],
+    "equipment": [
+      "Saucepan",
+      "frying pan",
+      "spatula"
+    ],
+    "ingredients": "4 eggs, butter, seasoning",
+    "method": [
+      "Check egg condition and approved source",
+      "Boil two eggs until fully cooked",
+      "Whisk remaining eggs",
+      "Cook gently while stirring until fully set",
+      "Serve promptly and clean equipment"
+    ],
+    "commonMistakes": [
+      "Excess heat",
+      "raw egg contamination"
+    ],
+    "practical": "Compare boiled and scrambled textures",
+    "knowledgeChecks": [
+      "Why does high heat toughen eggs?",
+      "How is raw egg contamination prevented?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "cooking-methods",
+    "title": "Rice and pasta",
+    "objectives": [
+      "Control hydration and safe storage"
+    ],
+    "equipment": [
+      "Pans",
+      "colander",
+      "timer"
+    ],
+    "ingredients": "100 g rice, 100 g pasta, water",
+    "method": [
+      "Read packet instructions",
+      "Measure water and ingredients",
+      "Cook rice and pasta separately to instructions",
+      "Check texture and drain where appropriate",
+      "Serve promptly or cool rapidly using validated workplace procedure",
+      "Record storage and reheating controls"
+    ],
+    "commonMistakes": [
+      "Leaving cooked rice at room temperature",
+      "overcooking"
+    ],
+    "practical": "Compare cooked yields and texture",
+    "knowledgeChecks": [
+      "Why is cooked rice a safety risk if left warm?",
+      "How do you check pasta texture?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 1,
+    "module": "cooking-methods",
+    "title": "Soups and simple dishes",
+    "objectives": [
+      "Combine preparation and cooking techniques"
+    ],
+    "equipment": [
+      "Knife",
+      "pan",
+      "ladle",
+      "scales"
+    ],
+    "ingredients": "300 g vegetables, 500 ml stock, 10 ml oil",
+    "method": [
+      "Wash and cut vegetables evenly",
+      "Sweat aromatics gently",
+      "Add stock and simmer until tender",
+      "Taste with clean spoon and adjust seasoning",
+      "Portion evenly and serve safely"
+    ],
+    "commonMistakes": [
+      "Burning aromatics",
+      "tasting with reused spoon"
+    ],
+    "practical": "Produce two portions and record yield",
+    "knowledgeChecks": [
+      "Why sweat aromatics?",
+      "How can soup consistency be adjusted?"
+    ],
+    "status": "draft"
+  }
+]
