@@ -1,0 +1,584 @@
+[
+  {
+    "level": 2,
+    "module": "stocks-sauces",
+    "title": "Stocks and reduction sauces",
+    "objectives": [
+      "Extract flavour and control concentration"
+    ],
+    "equipment": [
+      "Stockpot",
+      "sieve",
+      "ladle"
+    ],
+    "ingredients": "500 g vegetable trim suitable for stock, 1 litre water",
+    "method": [
+      "Inspect ingredients",
+      "Cover with water and bring to gentle simmer",
+      "Skim as needed",
+      "Strain carefully",
+      "Reduce a measured portion",
+      "Taste before seasoning and cool safely if storing"
+    ],
+    "commonMistakes": [
+      "Hard boiling",
+      "seasoning before reduction"
+    ],
+    "practical": "Compare original and reduced stock volumes and flavour",
+    "knowledgeChecks": [
+      "Why season after reduction?",
+      "Why strain carefully?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "stocks-sauces",
+    "title": "Roux and thickened sauces",
+    "objectives": [
+      "Control starch thickening"
+    ],
+    "equipment": [
+      "Pan",
+      "whisk",
+      "scales"
+    ],
+    "ingredients": "25 g butter, 25 g flour, 300 ml milk",
+    "method": [
+      "Check wheat and milk allergens",
+      "Melt butter gently",
+      "Stir in flour and cook without burning",
+      "Gradually whisk in milk",
+      "Simmer while stirring until smooth and cooked",
+      "Adjust thickness and serve or store safely"
+    ],
+    "commonMistakes": [
+      "Adding liquid too quickly",
+      "scorching base"
+    ],
+    "practical": "Compare two flour quantities and record consistency",
+    "knowledgeChecks": [
+      "What causes lumps?",
+      "Why simmer a roux sauce?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "stocks-sauces",
+    "title": "Emulsified sauces",
+    "objectives": [
+      "Explain emulsion stability"
+    ],
+    "equipment": [
+      "Bowl",
+      "whisk",
+      "jug"
+    ],
+    "ingredients": "60 ml oil, 20 ml vinegar, mustard; approved pasteurised egg recipe",
+    "method": [
+      "Verify allergens",
+      "Whisk vinegar and mustard",
+      "Add oil gradually while whisking",
+      "Observe separation over time",
+      "Under supervision prepare pasteurised-egg emulsion to approved recipe",
+      "Keep chilled as required"
+    ],
+    "commonMistakes": [
+      "Adding oil too quickly",
+      "using unapproved raw eggs"
+    ],
+    "practical": "Compare stability of two emulsions",
+    "knowledgeChecks": [
+      "What is an emulsion?",
+      "Why add oil gradually?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "stocks-sauces",
+    "title": "Soup production and finishing",
+    "objectives": [
+      "Balance texture and garnish"
+    ],
+    "equipment": [
+      "Pan",
+      "ladle",
+      "suitable blender"
+    ],
+    "ingredients": "Vegetables, stock, herbs",
+    "method": [
+      "Prepare a clear vegetable soup",
+      "Reserve a separate batch for blending",
+      "Blend safely using equipment rated for hot liquids",
+      "Adjust consistency and seasoning",
+      "Choose garnish and portion",
+      "Record yield and safe service controls"
+    ],
+    "commonMistakes": [
+      "Overfilling hot blender",
+      "excessive garnish"
+    ],
+    "practical": "Present clear and blended soups side by side",
+    "knowledgeChecks": [
+      "Why use a suitable hot-liquid blender?",
+      "What makes a garnish appropriate?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "protein",
+    "title": "Preparing and cooking proteins",
+    "objectives": [
+      "Match protein to method and verify safety"
+    ],
+    "equipment": [
+      "Dedicated board",
+      "knife",
+      "probe",
+      "pan"
+    ],
+    "ingredients": "Approved poultry or meat portions",
+    "method": [
+      "Identify cut and supplier instructions",
+      "Keep raw food separate",
+      "Trim and portion consistently",
+      "Cook using validated controls",
+      "Probe and record",
+      "Rest if appropriate and portion"
+    ],
+    "commonMistakes": [
+      "Judging safety by colour alone",
+      "reusing raw utensils"
+    ],
+    "practical": "Compare raw and cooked yield",
+    "knowledgeChecks": [
+      "Why probe rather than judge colour?",
+      "When is resting useful?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "protein",
+    "title": "Poultry portioning",
+    "objectives": [
+      "Identify joints and minimise contamination"
+    ],
+    "equipment": [
+      "Dedicated board",
+      "boning knife",
+      "scales"
+    ],
+    "ingredients": "One chilled chicken, supervised",
+    "method": [
+      "Check packaging and keep chilled",
+      "Do not wash raw poultry",
+      "Identify leg and wing joints",
+      "Separate joints under supervisor guidance",
+      "Weigh portions and refrigerate promptly",
+      "Clean and disinfect station"
+    ],
+    "commonMistakes": [
+      "Cutting through bone unnecessarily",
+      "washing poultry"
+    ],
+    "practical": "Record portion yield and clean-down checks",
+    "knowledgeChecks": [
+      "Why avoid washing raw chicken?",
+      "Where should raw portions be stored?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "protein",
+    "title": "Meat cuts and braising",
+    "objectives": [
+      "Choose cuts suited to slow moist cooking"
+    ],
+    "equipment": [
+      "Heavy pan",
+      "lid",
+      "probe"
+    ],
+    "ingredients": "400 g braising beef, vegetables, stock",
+    "method": [
+      "Trim and portion meat",
+      "Brown in batches",
+      "Sweat vegetables",
+      "Add stock and cover",
+      "Cook gently until tender and validated safety limits met",
+      "Check sauce and portion"
+    ],
+    "commonMistakes": [
+      "Overcrowding pan",
+      "boiling vigorously"
+    ],
+    "practical": "Compare tenderness and cooked yield",
+    "knowledgeChecks": [
+      "Why braise connective-tissue-rich cuts?",
+      "Why brown in batches?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "protein",
+    "title": "Fish preparation",
+    "objectives": [
+      "Inspect quality and remove bones safely"
+    ],
+    "equipment": [
+      "Fish knife",
+      "tweezers",
+      "board",
+      "probe"
+    ],
+    "ingredients": "Two approved fish fillets",
+    "method": [
+      "Check supplier, condition and temperature",
+      "Inspect fillets for bones",
+      "Remove pin bones under supervision",
+      "Portion evenly",
+      "Cook to validated product controls",
+      "Check quality and clean down"
+    ],
+    "commonMistakes": [
+      "Leaving pin bones",
+      "prolonged room temperature storage"
+    ],
+    "practical": "Prepare and cook two consistent portions",
+    "knowledgeChecks": [
+      "How do you check for pin bones?",
+      "Why keep fish chilled?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "vegetables",
+    "title": "Vegetable cookery and texture",
+    "objectives": [
+      "Choose methods for seasonal vegetables"
+    ],
+    "equipment": [
+      "Steamer",
+      "roasting tray",
+      "knife"
+    ],
+    "ingredients": "Broccoli, carrots, oil",
+    "method": [
+      "Wash and trim",
+      "Cut evenly",
+      "Steam one portion until tender",
+      "Roast another with measured oil",
+      "Taste and compare colour and texture",
+      "Record yield"
+    ],
+    "commonMistakes": [
+      "Overcooking",
+      "uneven portions"
+    ],
+    "practical": "Compare two methods and justify choice",
+    "knowledgeChecks": [
+      "Which method preserves crisp texture?",
+      "Why measure oil?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "vegetables",
+    "title": "Pulses and grains",
+    "objectives": [
+      "Prepare pulses safely and control texture"
+    ],
+    "equipment": [
+      "Pan",
+      "colander",
+      "scales"
+    ],
+    "ingredients": "Canned chickpeas, dry grain",
+    "method": [
+      "Read manufacturer instructions",
+      "Drain canned chickpeas",
+      "Cook grain as directed",
+      "If using dried pulses follow required soaking and vigorous boiling instructions, especially kidney beans",
+      "Combine and season",
+      "Serve or cool safely"
+    ],
+    "commonMistakes": [
+      "Assuming all dried beans need identical cooking",
+      "undercooking kidney beans"
+    ],
+    "practical": "Compare cooked yields and texture",
+    "knowledgeChecks": [
+      "Why follow pulse-specific instructions?",
+      "What changes cooked yield?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "vegetables",
+    "title": "Vegetable menu composition",
+    "objectives": [
+      "Build a balanced plant-based dish"
+    ],
+    "equipment": [
+      "Pans",
+      "scales",
+      "plate"
+    ],
+    "ingredients": "Chickpeas, seasonal vegetables, grain, herbs",
+    "method": [
+      "Select complementary components",
+      "Verify ingredient specifications",
+      "Cook grain and vegetables separately",
+      "Prepare pulse component",
+      "Balance acidity and seasoning",
+      "Plate with measured portions"
+    ],
+    "commonMistakes": [
+      "Ignoring allergens in dressings",
+      "monotonous texture"
+    ],
+    "practical": "Produce two consistent plant-based mains",
+    "knowledgeChecks": [
+      "How can texture contrast improve a dish?",
+      "Why verify sauces?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "pastry",
+    "title": "Shortcrust pastry fundamentals",
+    "objectives": [
+      "Control dough handling and temperature"
+    ],
+    "equipment": [
+      "Scales",
+      "bowl",
+      "rolling pin",
+      "tin"
+    ],
+    "ingredients": "200 g flour, 100 g cold butter, cold water as needed",
+    "method": [
+      "Check allergens",
+      "Rub butter into flour until crumbly",
+      "Add water gradually to bind",
+      "Rest chilled",
+      "Roll evenly and line tin",
+      "Bake to approved recipe and assess texture"
+    ],
+    "commonMistakes": [
+      "Overworking dough",
+      "stretching pastry into tin"
+    ],
+    "practical": "Compare rested and un-rested dough",
+    "knowledgeChecks": [
+      "Why rest pastry?",
+      "What causes shrinkage?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "pastry",
+    "title": "Bread fermentation",
+    "objectives": [
+      "Explain yeast and gluten development"
+    ],
+    "equipment": [
+      "Scales",
+      "bowl",
+      "oven",
+      "tray"
+    ],
+    "ingredients": "500 g bread flour, 7 g instant yeast, 10 g salt, about 320 ml water",
+    "method": [
+      "Weigh ingredients",
+      "Mix and knead until elastic",
+      "Cover and prove until suitably risen",
+      "Shape and prove again",
+      "Bake to recipe until fully baked",
+      "Cool on rack"
+    ],
+    "commonMistakes": [
+      "Water too hot",
+      "overproofing"
+    ],
+    "practical": "Compare dough volume before and after proving",
+    "knowledgeChecks": [
+      "What does yeast produce?",
+      "Why cool bread on a rack?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "pastry",
+    "title": "Choux pastry",
+    "objectives": [
+      "Explain steam expansion"
+    ],
+    "equipment": [
+      "Pan",
+      "spoon",
+      "piping bag",
+      "oven"
+    ],
+    "ingredients": "125 ml water, 50 g butter, 75 g flour, about 2 eggs",
+    "method": [
+      "Bring water and butter to boil",
+      "Add flour and stir to form panade",
+      "Cook briefly while stirring",
+      "Cool slightly and gradually beat in egg to piping consistency",
+      "Pipe evenly",
+      "Bake to approved recipe until set and dry"
+    ],
+    "commonMistakes": [
+      "Adding all egg at once",
+      "opening oven too early"
+    ],
+    "practical": "Compare piped size and baked volume",
+    "knowledgeChecks": [
+      "What raises choux?",
+      "Why add egg gradually?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "pastry",
+    "title": "Custards and desserts",
+    "objectives": [
+      "Control egg thickening and safe storage"
+    ],
+    "equipment": [
+      "Pan",
+      "whisk",
+      "probe",
+      "sieve"
+    ],
+    "ingredients": "Approved custard recipe, milk, pasteurised egg, sugar",
+    "method": [
+      "Check allergens and recipe",
+      "Warm milk",
+      "Whisk egg and sugar",
+      "Temper gradually",
+      "Cook gently to validated recipe limits while stirring",
+      "Strain and serve or cool rapidly according to policy"
+    ],
+    "commonMistakes": [
+      "Boiling egg custard",
+      "slow cooling"
+    ],
+    "practical": "Compare smooth and over-thickened samples under supervision",
+    "knowledgeChecks": [
+      "Why temper eggs?",
+      "Why record cooling?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "allergens",
+    "title": "Managing allergen orders",
+    "objectives": [
+      "Verify ingredients and prevent cross-contact"
+    ],
+    "equipment": [
+      "Current specifications",
+      "allergen matrix",
+      "clean utensils"
+    ],
+    "ingredients": "Mock order",
+    "method": [
+      "Confirm customer request",
+      "Check every ingredient and garnish",
+      "Communicate to responsible chef",
+      "Use controlled clean preparation area",
+      "Verify final plate and handover",
+      "Decline if safety cannot be assured"
+    ],
+    "commonMistakes": [
+      "Guessing ingredients",
+      "removing allergen from finished dish"
+    ],
+    "practical": "Role-play an order from request to handover",
+    "knowledgeChecks": [
+      "Why is removing garnish insufficient?",
+      "Who confirms the order?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "allergens",
+    "title": "Ingredient specifications and substitutions",
+    "objectives": [
+      "Maintain accurate allergen information"
+    ],
+    "equipment": [
+      "Supplier labels",
+      "matrix",
+      "recipe cards"
+    ],
+    "ingredients": "Mock original and replacement products",
+    "method": [
+      "List recipe components",
+      "Check current supplier labels for regulated allergens",
+      "Record matrix with date and version",
+      "Compare replacement product",
+      "Update affected recipes before use",
+      "Inform service team"
+    ],
+    "commonMistakes": [
+      "Assuming brands have identical ingredients",
+      "outdated matrix"
+    ],
+    "practical": "Revise a mock matrix after substitution",
+    "knowledgeChecks": [
+      "Why check each replacement?",
+      "What records need updating?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 2,
+    "module": "allergens",
+    "title": "Allergen communication drill",
+    "objectives": [
+      "Escalate uncertainty and communicate clearly"
+    ],
+    "equipment": [
+      "Mock tickets",
+      "matrix",
+      "clean equipment"
+    ],
+    "ingredients": "Mock order",
+    "method": [
+      "Repeat request accurately",
+      "Identify responsible person",
+      "Verify specifications and cross-contact controls",
+      "Mark ticket clearly",
+      "Confirm plate at handover",
+      "Explain inability to guarantee safety when necessary"
+    ],
+    "commonMistakes": [
+      "Verbal assumptions",
+      "unmarked plates"
+    ],
+    "practical": "Run a simulated allergy order and debrief",
+    "knowledgeChecks": [
+      "What if ingredient information is unavailable?",
+      "Why confirm handover?"
+    ],
+    "status": "draft"
+  }
+]
