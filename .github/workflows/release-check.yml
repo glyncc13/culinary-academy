@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '22.16.0'
       - run: npm test
-      - run: find netlify/functions -name '*.js' -exec node --check {} \;
+      - run: for f in netlify/functions/*.js; do node --check "$f" || exit 1; done
       - name: Require committed lockfile
         run: test -f package-lock.json
       - run: npm ci --ignore-scripts
@@ -54,6 +54,7 @@ jobs:
             psql -v ON_ERROR_STOP=1 -f "$file"
           done
       - run: psql -v ON_ERROR_STOP=1 -f tests/database-integration.sql
+      - run: bash tests/database-concurrency.sh
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
