@@ -4,7 +4,7 @@
 - Trading name: Culinary Academy (proposed; legal identity not confirmed).
 - Legal structure: undecided.
 - Support email: undecided.
-- Website domain: undecided.
+- Website domain: https://culinaryacademy.co.uk (coming-soon page HTTPS verified 26 November 2026; production academy cutover not approved).
 - Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
 
 Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
