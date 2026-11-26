@@ -117,6 +117,7 @@ begin
 perform 1 from public.academy_practical_submissions where id=p_submission and user_id=p_user and status='pending' for update;
 if not found then raise exception 'submission unavailable'; end if;
 if not exists(select 1 from public.subscriptions where user_id=p_user and status in ('active','trialing') and current_period_end>now()) then raise exception 'membership required'; end if;
+if (select count(*) from public.academy_evidence_files where submission_id=p_submission)>=20 then raise exception 'reservation limit'; end if;
 if (select count(*) from public.academy_evidence_files where submission_id=p_submission and cancelled_at is null)>=5 then raise exception 'file limit'; end if;
 insert into public.academy_evidence_files(id,submission_id,object_path,mime) values(fid,p_submission,p_user::text||'/'||p_submission::text||'/'||fid::text,p_mime) returning * into f;
 return to_jsonb(f);
@@ -128,7 +129,8 @@ create function public.academy_attach_evidence(p_user uuid,p_file uuid) returns 
 begin
 perform 1 from public.academy_practical_submissions s join public.academy_evidence_files f on f.submission_id=s.id where f.id=p_file and f.cancelled_at is null and s.user_id=p_user and s.status='pending' for update of s;
 if not found then raise exception 'attachment denied'; end if;
-update public.academy_evidence_files set attached=true where id=p_file;
+update public.academy_evidence_files set attached=true where id=p_file and cancelled_at is null;
+if not found then raise exception 'attachment denied'; end if;
 return true;
 end $attach$;
 revoke all on function public.academy_attach_evidence(uuid,uuid) from public,anon,authenticated;
@@ -178,3 +180,13 @@ return true;
 end $cancel$;
 revoke all on function public.academy_cancel_evidence(uuid,uuid,uuid) from public,anon,authenticated;
 grant execute on function public.academy_cancel_evidence(uuid,uuid,uuid) to service_role;
+
+-- Never reuse cancelled paths. Cleanup candidates are restricted to tombstones.
+alter table public.academy_evidence_files add column cleaned_at timestamptz;
+create index academy_evidence_cleanup_idx on public.academy_evidence_files(cancelled_at) where cancelled_at is not null and cleaned_at is null and not attached;
+alter table public.academy_evidence_files add constraint academy_evidence_cancel_exclusive check (not attached or cancelled_at is null);
+create function public.academy_evidence_cleanup_candidates() returns table(id uuid,object_path text) language sql security invoker set search_path='' as $cleanup$
+select f.id,f.object_path from public.academy_evidence_files f where f.cancelled_at < now()-interval '24 hours' and not f.attached and f.cleaned_at is null order by f.cancelled_at limit 100;
+$cleanup$;
+revoke all on function public.academy_evidence_cleanup_candidates() from public,anon,authenticated;
+grant execute on function public.academy_evidence_cleanup_candidates() to service_role;
