@@ -5,7 +5,7 @@
 - Legal structure: undecided.
 - General enquiries: info@culinaryacademy.co.uk (mailbox created; delivery verification pending).
 - Support email: confirm designated mailbox before launch.
-- Website domain: https://culinaryacademy.co.uk (registered; standalone coming-soon project; DNS/TLS verification pending).
+- Website domain: https://culinaryacademy.co.uk (registered; standalone coming-soon project; public HTTPS verified 26 November 2026 in Chrome: apex and www load the coming-soon page; www and HTTP resolve to apex HTTPS without browser warnings).
 - Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
 
 Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
