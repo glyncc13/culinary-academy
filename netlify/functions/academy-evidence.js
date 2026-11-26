@@ -5,12 +5,12 @@ const types=['image/jpeg','image/png','image/webp','video/mp4','video/webm'];
 exports.handler=async event=>{
 if(event.httpMethod!=='POST')return json(405,{error:'POST required'});
 let u;try{u=await currentUser(event)}catch{return json(401,{error:'Sign in required'})}
+if(!u?.id)return json(401,{error:'Sign in required'});
 try{
 if((event.body||'').length>4000)return json(413,{error:'Request too large'});
 const x=JSON.parse(event.body||'{}');
 if(!uuid(x.submission_id))return json(400,{error:'Invalid submission'});
 const s=(await db('academy_practical_submissions?select=id,user_id,status&id=eq.'+x.submission_id))[0];
-if(!u?.id)return json(401,{error:'Sign in required'});
 if(!s)return json(404,{error:'Unavailable'});
 const owner=s.user_id===u.id;
 const assigned=!owner&&await hasMfa(event,u)&&(await db('academy_supervisor_students?select=student_id&supervisor_id=eq.'+u.id+'&student_id=eq.'+s.user_id)).length>0;
@@ -18,7 +18,7 @@ if(!owner&&!assigned)return json(403,{error:'Access denied'});
 const storage=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}}).storage.from('academy-evidence');
 if(x.action==='reserve'&&owner&&s.status==='pending'&&types.includes(x.mime)){
 const f=await db('rpc/academy_reserve_evidence',{method:'POST',body:JSON.stringify({p_user:u.id,p_submission:s.id,p_mime:x.mime})});
-const {data,error}=await storage.createSignedUploadUrl(f.object_path,{upsert:false});if(error)throw error;
+const {data,error}=await storage.createSignedUploadUrl(f.object_path,{upsert:false});if(error||!data?.token)throw Error('Upload unavailable');
 return json(200,{id:f.id,path:f.object_path,token:data.token});
 }
 if(x.action==='list'){
