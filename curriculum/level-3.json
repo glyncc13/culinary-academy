@@ -1,0 +1,483 @@
+[
+  {
+    "level": 3,
+    "module": "advanced-techniques",
+    "title": "Controlled cooking and finishing",
+    "objectives": [
+      "Set measurable quality targets"
+    ],
+    "equipment": [
+      "Scales",
+      "probe",
+      "timer",
+      "pans"
+    ],
+    "ingredients": "Three equal portions of approved ingredient",
+    "method": [
+      "Define target weight and texture",
+      "Choose validated cooking method",
+      "Cook trial portions consistently",
+      "Record time and safety checks",
+      "Finish with measured seasoning",
+      "Compare results"
+    ],
+    "commonMistakes": [
+      "Changing multiple variables",
+      "sacrificing safety for texture"
+    ],
+    "practical": "Produce three portions and evaluate variation",
+    "knowledgeChecks": [
+      "Why define targets first?",
+      "Which controls cannot be compromised?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "advanced-techniques",
+    "title": "Batch consistency and service timing",
+    "objectives": [
+      "Coordinate repeatable batch production"
+    ],
+    "equipment": [
+      "Prep sheet",
+      "timer",
+      "scales",
+      "probe"
+    ],
+    "ingredients": "Ingredients for three portions",
+    "method": [
+      "Write batch specification",
+      "Weigh each portion",
+      "Plan backward from service",
+      "Cook in suitable batch sizes",
+      "Record temperatures and finishing times",
+      "Compare plates and adjust workflow"
+    ],
+    "commonMistakes": [
+      "Overloading equipment",
+      "inconsistent portioning"
+    ],
+    "practical": "Simulate three simultaneous orders",
+    "knowledgeChecks": [
+      "Why limit batch size?",
+      "How can timing variation be reduced?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "advanced-techniques",
+    "title": "Texture and flavour development",
+    "objectives": [
+      "Evaluate browning, acidity and seasoning"
+    ],
+    "equipment": [
+      "Oven",
+      "steamer",
+      "scales",
+      "tasting spoons"
+    ],
+    "ingredients": "Seasonal vegetables, oil, lemon",
+    "method": [
+      "Prepare identical cuts",
+      "Steam and roast separate batches",
+      "Compare moisture and browning",
+      "Divide samples and add measured acid or seasoning",
+      "Taste using clean spoons",
+      "Record preferred balance"
+    ],
+    "commonMistakes": [
+      "Changing several variables together",
+      "excessive seasoning"
+    ],
+    "practical": "Run a controlled tasting trial",
+    "knowledgeChecks": [
+      "Why does dry heat promote browning?",
+      "How does acidity affect flavour?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "advanced-techniques",
+    "title": "Advanced plating",
+    "objectives": [
+      "Design repeatable presentation"
+    ],
+    "equipment": [
+      "Plates",
+      "scales",
+      "spoons",
+      "timer"
+    ],
+    "ingredients": "Prepared main and garnishes",
+    "method": [
+      "Sketch plate layout",
+      "Specify component weights",
+      "Choose suitable plate temperature",
+      "Arrange main component and sides",
+      "Apply measured sauce and garnish",
+      "Check rim and service timing"
+    ],
+    "commonMistakes": [
+      "Decorative inedible garnish",
+      "slow plating"
+    ],
+    "practical": "Reproduce three plates and compare",
+    "knowledgeChecks": [
+      "Why specify weights?",
+      "How does plating affect service temperature?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "menu-development",
+    "title": "Designing a balanced menu",
+    "objectives": [
+      "Match menu to customer and capacity"
+    ],
+    "equipment": [
+      "Menu template",
+      "recipe cards",
+      "costing sheet"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Define audience and price point",
+      "Map kitchen equipment and staffing",
+      "Choose complementary dishes",
+      "Check dietary options and allergens",
+      "Cost and trial dishes",
+      "Review feedback and revise"
+    ],
+    "commonMistakes": [
+      "Too many dishes on one station",
+      "unverified dietary claims"
+    ],
+    "practical": "Design a six-dish menu for a pub",
+    "knowledgeChecks": [
+      "Why consider equipment capacity?",
+      "How can menu variety affect waste?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "menu-development",
+    "title": "Recipe specification development",
+    "objectives": [
+      "Write reproducible recipes"
+    ],
+    "equipment": [
+      "Scales",
+      "template",
+      "calculator"
+    ],
+    "ingredients": "Ingredients for chosen dish",
+    "method": [
+      "Record exact ingredient units and supplier specifications",
+      "Define yield and portion size",
+      "Write ordered method and safety controls",
+      "List allergens and garnish",
+      "Trial recipe twice",
+      "Version and approve changes"
+    ],
+    "commonMistakes": [
+      "Vague quantities",
+      "missing garnish allergens"
+    ],
+    "practical": "Create and test one recipe card",
+    "knowledgeChecks": [
+      "Why record version?",
+      "What makes a recipe reproducible?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "menu-development",
+    "title": "Seasonality and dietary adaptation",
+    "objectives": [
+      "Adapt dishes while retaining quality"
+    ],
+    "equipment": [
+      "Supplier list",
+      "recipe cards",
+      "matrix"
+    ],
+    "ingredients": "Two seasonal alternatives",
+    "method": [
+      "Identify seasonal availability",
+      "Choose suitable substitutions",
+      "Check specifications and allergens",
+      "Trial texture and flavour",
+      "Recalculate cost and yield",
+      "Update menu and communicate changes"
+    ],
+    "commonMistakes": [
+      "Assuming plant-based means allergen-free",
+      "uncosted substitutions"
+    ],
+    "practical": "Design two seasonal variations",
+    "knowledgeChecks": [
+      "Why recheck allergens?",
+      "How can seasonality affect cost?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "menu-development",
+    "title": "Menu engineering",
+    "objectives": [
+      "Compare popularity and contribution"
+    ],
+    "equipment": [
+      "Spreadsheet or calculator",
+      "fictional sales data"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Collect units sold and net prices",
+      "Subtract ingredient cost per dish to calculate contribution",
+      "Calculate total contribution",
+      "Compare popularity and contribution against chosen benchmarks",
+      "Propose changes and test impact",
+      "Consider labour and capacity separately"
+    ],
+    "commonMistakes": [
+      "Confusing margin with cash contribution",
+      "ignoring sales mix"
+    ],
+    "practical": "Analyse five fictional dishes",
+    "knowledgeChecks": [
+      "What is contribution per dish?",
+      "Why can a popular dish be low profit?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "costing",
+    "title": "Recipe costing and yield",
+    "objectives": [
+      "Calculate cost per saleable portion"
+    ],
+    "equipment": [
+      "Scales",
+      "invoices",
+      "calculator"
+    ],
+    "ingredients": "Example 2 kg produce costing £6, 1.5 kg usable",
+    "method": [
+      "Record purchase quantity and cost",
+      "Weigh usable yield",
+      "Calculate £6 divided by 1.5 kg = £4 per usable kg",
+      "Cost all ingredients and garnish",
+      "Divide total by saleable portions",
+      "Compare actual and standard yield"
+    ],
+    "commonMistakes": [
+      "Costing purchase weight instead of usable weight",
+      "omitting garnish"
+    ],
+    "practical": "Cost a recipe using actual trim weights",
+    "knowledgeChecks": [
+      "What is usable kg cost?",
+      "Why count saleable portions?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "costing",
+    "title": "Gross profit and pricing",
+    "objectives": [
+      "Distinguish margin and markup"
+    ],
+    "equipment": [
+      "Calculator",
+      "costing sheet"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Calculate total portion ingredient cost",
+      "Choose target gross margin",
+      "Divide cost by one minus target margin",
+      "For £3 cost and 70% margin calculate £10 net price",
+      "Apply applicable VAT separately",
+      "Review labour and overhead impact"
+    ],
+    "commonMistakes": [
+      "Multiplying cost by 1.7 for 70% margin",
+      "mixing VAT-inclusive and net prices"
+    ],
+    "practical": "Cost five fictional dishes and propose prices",
+    "knowledgeChecks": [
+      "What net price gives 70% margin on £3?",
+      "How does markup differ?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "costing",
+    "title": "Stock reconciliation and waste",
+    "objectives": [
+      "Investigate actual versus expected usage"
+    ],
+    "equipment": [
+      "Stock sheet",
+      "invoices",
+      "waste log"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Count opening stock consistently",
+      "Add purchases and transfers in",
+      "Subtract closing stock and transfers out",
+      "Compare actual usage with recipe-based expected usage",
+      "Review waste and recording errors",
+      "Agree corrective actions"
+    ],
+    "commonMistakes": [
+      "Mixing units",
+      "blaming staff without evidence"
+    ],
+    "practical": "Reconcile fictional weekly stock and explain variance",
+    "knowledgeChecks": [
+      "How is actual usage calculated?",
+      "What can cause variance?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "leadership",
+    "title": "Leading a kitchen service",
+    "objectives": [
+      "Coordinate safe consistent service"
+    ],
+    "equipment": [
+      "Booking sheet",
+      "prep list",
+      "station plan"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Review bookings and allergens",
+      "Brief team on priorities",
+      "Confirm station readiness",
+      "Communicate ticket timing and delays",
+      "Escalate safety or quality failures",
+      "Debrief with measurable actions"
+    ],
+    "commonMistakes": [
+      "Unclear responsibilities",
+      "rushing unsafe food"
+    ],
+    "practical": "Lead a simulated service briefing",
+    "knowledgeChecks": [
+      "What belongs in a briefing?",
+      "When should service be stopped?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "leadership",
+    "title": "Service planning and delegation",
+    "objectives": [
+      "Allocate work by competence and capacity"
+    ],
+    "equipment": [
+      "Rota",
+      "booking forecast",
+      "prep sheets"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Estimate demand by time slot",
+      "Map station capacity",
+      "Assign tasks to trained staff",
+      "Plan breaks and contingencies",
+      "Set check-in times",
+      "Review readiness and adjust"
+    ],
+    "commonMistakes": [
+      "Assigning unfamiliar high-risk tasks unsupervised",
+      "ignoring breaks"
+    ],
+    "practical": "Plan service for 40 fictional covers",
+    "knowledgeChecks": [
+      "Why match tasks to competence?",
+      "How can bottlenecks be managed?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "leadership",
+    "title": "Food safety supervision",
+    "objectives": [
+      "Respond to failed controls"
+    ],
+    "equipment": [
+      "Incident form",
+      "mock logs",
+      "allergen matrix"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Identify failed control",
+      "Stop affected service and isolate food",
+      "Notify responsible manager",
+      "Assess against documented procedure",
+      "Record disposal or authorised corrective action",
+      "Investigate cause and verify prevention"
+    ],
+    "commonMistakes": [
+      "Serving while investigating",
+      "falsifying logs"
+    ],
+    "practical": "Run a mock failed temperature or allergen incident",
+    "knowledgeChecks": [
+      "What is the first action after a serious failure?",
+      "Why record corrective action?"
+    ],
+    "status": "draft"
+  },
+  {
+    "level": 3,
+    "module": "leadership",
+    "title": "Coaching and performance",
+    "objectives": [
+      "Give specific constructive feedback"
+    ],
+    "equipment": [
+      "Observation sheet",
+      "training plan"
+    ],
+    "ingredients": "None",
+    "method": [
+      "Agree task and expected standard",
+      "Observe without interrupting unless unsafe",
+      "Describe specific behaviour and impact",
+      "Demonstrate improvement",
+      "Ask learner to repeat",
+      "Set review date and record progress"
+    ],
+    "commonMistakes": [
+      "Personal criticism",
+      "vague feedback"
+    ],
+    "practical": "Coach a supervised preparation task",
+    "knowledgeChecks": [
+      "What makes feedback actionable?",
+      "When should a supervisor intervene?"
+    ],
+    "status": "draft"
+  }
+]
