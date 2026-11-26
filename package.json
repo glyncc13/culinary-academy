@@ -1,1 +1,12 @@
-{"name":"culinary-academy-stripe-test","private":true,"version":"0.1.0","type":"commonjs","dependencies":{"stripe":"^17.7.0"}}
+{
+  "name": "culinary-academy-stripe-test",
+  "private": true,
+  "version": "0.2.0-rc.1",
+  "type": "commonjs",
+  "dependencies": {
+    "stripe": "^17.7.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  }
+}
