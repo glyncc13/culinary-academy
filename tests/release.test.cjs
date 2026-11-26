@@ -24,3 +24,26 @@ test('practical submission derives student identity from authenticated user',asy
 test('competency status uses authenticated identity for all levels',async()=>{const calls=[];const handler=load('academy-learning',{json,currentUser:async()=>({id:'u'}),db:async(p,o)=>{if(p.startsWith('rpc/')){const x=JSON.parse(o.body);assert.equal(x.p_user,'u');calls.push(x.p_level);return x.p_level===1}assert.ok(p.includes('user_id=eq.u'));return []}});const r=await handler(event({action:'competency',user_id:'other'}));assert.equal(r.statusCode,200);assert.deepEqual(calls,[1,2,3]);assert.equal(JSON.parse(r.body).levels[0].practicalEligible,true)});
 test('supervisor endpoints deny sessions without MFA',async()=>{const handler=load('academy-learning',{json,currentUser:async()=>({id:'u'}),hasMfa:async()=>false,db:async()=>{throw Error('must not query')}});for(const action of ['supervisorStatus','supervisorQueue','mark'])assert.equal((await handler(event({action}))).statusCode,403)});
 test('supervisor queue restricts queries to allocated students',async()=>{const id='12345678-1234-1234-1234-123456789abc';const handler=load('academy-learning',{json,currentUser:async()=>({id:'u'}),hasMfa:async()=>true,db:async p=>{if(p.startsWith('academy_supervisors'))return [{}];if(p.startsWith('academy_supervisor_students')){assert.ok(p.includes('supervisor_id=eq.u'));return [{student_id:id}]}assert.ok(p.includes('user_id=in.('+id+')'));return []}});assert.equal((await handler(event({action:'supervisorQueue'}))).statusCode,200)});
+
+test('certificate journey requires membership, theory, lessons and practical competency before issuance',async()=>{
+for(const missing of ['membership','theory','lessons','practical',null]){
+let issued=null,writes=0;
+const handler=load('academy-certificate',{json,site:()=> 'https://example.test',currentUser:async()=>({id:'student'}),db:async(p,o)=>{
+if(p.startsWith('academy_certificates?on_conflict')){assert.equal(missing,null);const x=JSON.parse(o.body);assert.equal(x.user_id,'student');writes++;issued={...x,id:'12345678-1234-1234-1234-123456789abc',issued_at:'2026-01-01'};return null}
+if(p.startsWith('academy_certificates?'))return issued?[issued]:[];
+if(p.startsWith('subscriptions'))return missing==='membership'?[]:[{}];
+if(p.startsWith('academy_attempts'))return missing==='theory'?[]:[{}];
+if(p.startsWith('academy_modules'))return [{slug:'module'}];
+if(p.startsWith('academy_module_lessons'))return [{module_slug:'module',lesson_id:'lesson'}];
+if(p.startsWith('academy_catalogue'))return [{lesson_id:'lesson'}];
+if(p.startsWith('lessons?'))return [{id:'lesson'}];
+if(p.startsWith('academy_progress'))return missing==='lessons'?[]:[{lesson_id:'lesson'}];
+if(p==='rpc/academy_practical_eligible'){assert.equal(JSON.parse(o.body).p_user,'student');return missing!=='practical'}
+throw Error('Unexpected query '+p);
+}});
+const result=await handler(event({level:1,name:'Test Student',consent:true,user_id:'other'}));
+assert.equal(result.statusCode,missing?403:200,missing||'eligible');
+assert.equal(writes,missing?0:1);
+if(!missing)assert.ok(Buffer.from(result.body,'base64').toString().startsWith('%PDF-1.4'));
+}
+});
