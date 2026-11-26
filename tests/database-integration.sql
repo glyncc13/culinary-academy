@@ -103,5 +103,17 @@ perform public.academy_allocate_supervisor('11111111-1111-4111-8111-111111111111
 if public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":1,"preparation":3,"technique":3,"quality":3,"organisation":3,"reflection":3}','Safety revision required') then raise exception 'unsafe practical passed'; end if;
 if not exists(select 1 from public.academy_practical_submissions where id=sid and status='revise') then raise exception 'revision missing'; end if;
 if public.academy_practical_eligible('11111111-1111-4111-8111-111111111111',1::smallint) then raise exception 'incomplete competency passed'; end if;
+sid:=public.academy_submit_practical('11111111-1111-4111-8111-111111111111','44444444-4444-4444-8444-444444444444','Second synthetic practical evidence for CI');
+perform public.academy_change_supervisor('11111111-1111-4111-8111-111111111111','77777777-7777-4777-8777-777777777777','11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222','reassign');
+denied:=false;
+begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'former supervisor can mark'; end if;
+if not exists(select 1 from public.academy_supervisor_students where supervisor_id='22222222-2222-4222-8222-222222222222' and student_id='11111111-1111-4111-8111-111111111111') then raise exception 'replacement allocation missing'; end if;
+perform public.academy_change_supervisor('11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222',null,null,'revoke');
+if exists(select 1 from public.academy_supervisors where user_id='22222222-2222-4222-8222-222222222222') or exists(select 1 from public.academy_supervisor_students where supervisor_id='22222222-2222-4222-8222-222222222222') then raise exception 'revocation incomplete'; end if;
+denied:=false;
+begin perform public.academy_mark_practical('22222222-2222-4222-8222-222222222222',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'revoked supervisor can mark'; end if;
+if not exists(select 1 from public.academy_practical_submissions where reviewer='77777777-7777-4777-8777-777777777777' and status='revise') then raise exception 'historical assessment lost'; end if;
 end $practical$;
 rollback;
