@@ -1,0 +1,1 @@
+exports.handler=async()=>{const url=process.env.SUPABASE_URL?.trim(),key=process.env.SUPABASE_ANON_KEY?.trim();if(!url||!key)return {statusCode:503,body:'Configuration unavailable'};return {statusCode:200,headers:{'Content-Type':'application/json','Cache-Control':'no-store'},body:JSON.stringify({url,key})};};
