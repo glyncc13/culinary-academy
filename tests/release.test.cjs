@@ -75,3 +75,20 @@ assert.equal(writes,0);
 test('supervisor permission changes require MFA and explicit confirmation',async()=>{
 const id='12345678-1234-1234-1234-123456789abc';for(const mfa of [false,true]){let writes=0;const handler=load('academy-learning',{json,currentUser:async()=>({id:'admin'}),hasMfa:async()=>mfa,db:async(p,o)=>{if(p.startsWith('academy_admins'))return [{}];assert.equal(p,'rpc/academy_change_supervisor');assert.equal(JSON.parse(o.body).p_actor,'admin');writes++;return true}});assert.equal((await handler(event({action:'changeSupervisor',operation:'revoke',supervisor_id:id}))).statusCode,mfa?400:403);assert.equal((await handler(event({action:'changeSupervisor',operation:'revoke',supervisor_id:id,confirm:'REVOKE'}))).statusCode,mfa?200:403);assert.equal(writes,mfa?1:0)}
 });
+
+test('concurrent certificate requests return the same persisted certificate',async()=>{
+let issued=null,attempts=0,release;const barrier=new Promise(r=>release=r);
+const handler=load('academy-certificate',{json,site:()=> 'https://example.test',currentUser:async()=>({id:'student'}),db:async(p,o)=>{
+if(p.startsWith('academy_certificates?on_conflict')){assert.equal(o.headers.Prefer,'resolution=ignore-duplicates');attempts++;if(attempts===2)release();await barrier;if(!issued)issued={...JSON.parse(o.body),id:'12345678-1234-1234-1234-123456789abc',issued_at:'2026-01-01'};return null}
+if(p.startsWith('academy_certificates?'))return issued?[issued]:[];
+if(p.startsWith('subscriptions')||p.startsWith('academy_attempts'))return [{}];
+if(p.startsWith('academy_modules'))return [{slug:'module'}];
+if(p.startsWith('academy_module_lessons'))return [{module_slug:'module',lesson_id:'lesson'}];
+if(p.startsWith('academy_catalogue')||p.startsWith('academy_progress'))return [{lesson_id:'lesson'}];
+if(p.startsWith('lessons?'))return [{id:'lesson'}];
+if(p==='rpc/academy_practical_eligible')return true;
+throw Error('Unexpected query');
+}});
+const results=await Promise.all([handler(event({level:1,name:'First Student',consent:true})),handler(event({level:1,name:'Second Student',consent:true}))]);
+assert.equal(attempts,2);assert.equal(results[0].statusCode,200);assert.equal(results[1].statusCode,200);assert.equal(results[0].body,results[1].body);
+});
