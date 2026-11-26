@@ -74,4 +74,34 @@ if not exists(select 1 from public.academy_admin_audit a join public.academy_adm
 if has_function_privilege('authenticated','public.academy_rotate_questions(uuid,jsonb)','execute') or has_function_privilege('anon','public.academy_acquire_lease(text,uuid)','execute') then raise exception 'privileged RPC exposed'; end if;
 end $rotation$;
 
+update public.subscriptions set current_period_end=now()+interval '1 day' where stripe_subscription_id='ci-sub';
+insert into auth.users values ('77777777-7777-4777-8777-777777777777');
+do $practical$
+declare sid uuid; fid uuid; denied boolean; f jsonb;
+begin
+if has_table_privilege('authenticated','public.academy_evidence_files','select') or has_function_privilege('authenticated','public.academy_reserve_evidence(uuid,uuid,text)','execute') then raise exception 'evidence privilege leak'; end if;
+if not exists(select 1 from storage.buckets where id='academy-evidence' and not public) then raise exception 'evidence bucket public or missing'; end if;
+sid:=public.academy_submit_practical('11111111-1111-4111-8111-111111111111','44444444-4444-4444-8444-444444444444','Synthetic practical evidence for CI');
+denied:=false;
+begin perform public.academy_reserve_evidence('22222222-2222-4222-8222-222222222222',sid,'image/jpeg'); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'cross-user reservation accepted'; end if;
+for i in 1..5 loop
+f:=public.academy_reserve_evidence('11111111-1111-4111-8111-111111111111',sid,'image/jpeg');
+fid:=(f->>'id')::uuid;
+end loop;
+denied:=false;
+begin perform public.academy_reserve_evidence('11111111-1111-4111-8111-111111111111',sid,'image/jpeg'); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'evidence quota bypass'; end if;
+denied:=false;
+begin perform public.academy_attach_evidence('22222222-2222-4222-8222-222222222222',fid); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'cross-user attachment accepted'; end if;
+perform public.academy_attach_evidence('11111111-1111-4111-8111-111111111111',fid);
+denied:=false;
+begin perform public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":2,"preparation":2,"technique":2,"quality":2,"organisation":2,"reflection":2}','CI feedback'); exception when raise_exception then denied:=true; end;
+if not denied then raise exception 'unallocated marking accepted'; end if;
+perform public.academy_allocate_supervisor('11111111-1111-4111-8111-111111111111','77777777-7777-4777-8777-777777777777','11111111-1111-4111-8111-111111111111');
+if public.academy_mark_practical('77777777-7777-4777-8777-777777777777',sid,'{"safety":1,"preparation":3,"technique":3,"quality":3,"organisation":3,"reflection":3}','Safety revision required') then raise exception 'unsafe practical passed'; end if;
+if not exists(select 1 from public.academy_practical_submissions where id=sid and status='revise') then raise exception 'revision missing'; end if;
+if public.academy_practical_eligible('11111111-1111-4111-8111-111111111111',1::smallint) then raise exception 'incomplete competency passed'; end if;
+end $practical$;
 rollback;
