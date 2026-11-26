@@ -1,0 +1,12 @@
+create table public.academy_student_notes(user_id uuid primary key references auth.users(id), note text not null default '', updated_at timestamptz not null default now());
+alter table public.academy_student_notes enable row level security;
+revoke all on public.academy_student_notes from public,anon,authenticated;
+grant select,insert,update on public.academy_student_notes to service_role;
+create table public.academy_lesson_videos(lesson_id uuid primary key references public.lessons(id), object_path text not null unique);
+alter table public.academy_lesson_videos enable row level security;
+revoke all on public.academy_lesson_videos from public,anon,authenticated;
+grant select,insert,update on public.academy_lesson_videos to service_role;
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) values ('academy-videos','academy-videos',false,52428800,array['video/mp4','video/webm']) on conflict(id) do nothing;
+create function public.academy_admin_create_lesson(p_module text,p_title text,p_description text,p_steps jsonb) returns uuid language plpgsql security invoker set search_path='' as $$ declare v_id uuid; v_level smallint; begin select level into strict v_level from public.academy_modules where slug=p_module for update; insert into public.lessons(title,category,description,steps,status) values(p_title,'Level '||v_level,p_description,p_steps,'draft') returning id into v_id; insert into public.academy_catalogue(lesson_id) values(v_id); insert into public.academy_module_lessons(module_slug,lesson_id,position) select p_module,v_id,coalesce(max(position),0)+1 from public.academy_module_lessons where module_slug=p_module; return v_id; end $$;
+revoke all on function public.academy_admin_create_lesson(text,text,text,jsonb) from public,anon,authenticated;
+grant execute on function public.academy_admin_create_lesson(text,text,text,jsonb) to service_role;
