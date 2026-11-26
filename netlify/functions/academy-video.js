@@ -1,11 +1,11 @@
-const {db,json,currentUser}=require('./_shared');
+const {db,json,currentUser,hasMfa}=require('./_shared');
 const {randomUUID}=require('crypto');
 exports.handler=async event=>{
  if(event.httpMethod!=='POST')return json(405,{error:'POST required'});
  let user;try{user=await currentUser(event)}catch{return json(401,{error:'Sign in required'})}
  try{
  const x=JSON.parse(event.body||'{}');if(typeof x.lesson_id!=='string'||! /^[0-9a-f-]{36}$/i.test(x.lesson_id))return json(400,{error:'Invalid lesson'});
- const admin=(await db('academy_admins?select=user_id&user_id=eq.'+user.id)).length>0;
+ const admin=await hasMfa(event,user)&&(await db('academy_admins?select=user_id&user_id=eq.'+user.id)).length>0;
  const base=process.env.SUPABASE_URL+'/storage/v1';const headers={apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+process.env.SUPABASE_SERVICE_ROLE_KEY,'Content-Type':'application/json'};
  const lesson=await db('lessons?select=id,status&id=eq.'+x.lesson_id);if(!lesson.length)return json(404,{error:'Lesson unavailable'});
  const storage=async(path,body)=>{const r=await fetch(base+path,{method:'POST',headers,body:JSON.stringify(body)});if(!r.ok)throw Error('Storage request failed');return r.json()};
