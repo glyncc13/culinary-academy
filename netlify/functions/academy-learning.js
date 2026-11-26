@@ -19,8 +19,14 @@ exports.handler=async event=>{
  if(!uuid(x.id)||!x.rubric||typeof x.feedback!=='string')return json(400,{error:'Invalid rubric'});
  return json(200,{competent:await rpc('academy_mark_practical',{p_actor:u.id,p_id:x.id,p_rubric:x.rubric,p_feedback:x.feedback.trim()})});
  }
- if(['preview','import','queue','review','drafts','approve','allocate'].includes(x.action)){
+ if(['preview','import','queue','review','drafts','approve','allocate','allocations','changeSupervisor'].includes(x.action)){
  if(!(await db('academy_admins?select=user_id&user_id=eq.'+u.id)).length||!await hasMfa(event,u))return json(403,{error:'Administrator MFA required'});
+ if(x.action==='allocations')return json(200,{rows:await db('academy_supervisor_students?select=supervisor_id,student_id&order=supervisor_id,student_id&limit=200'),supervisors:await db('academy_supervisors?select=user_id&order=user_id&limit=200')});
+ if(x.action==='changeSupervisor'){
+ const a=x.operation;
+ if(!['remove','reassign','revoke'].includes(a)||!uuid(x.supervisor_id)||x.confirm!==a.toUpperCase()||(a!=='revoke'&&!uuid(x.student_id))||(a==='reassign'&&(!uuid(x.replacement_id)||x.replacement_id===x.student_id||x.replacement_id===x.supervisor_id)))return json(400,{error:'Invalid permission change'});
+ return json(200,{ok:await rpc('academy_change_supervisor',{p_actor:u.id,p_supervisor:x.supervisor_id,p_student:a==='revoke'?null:x.student_id,p_replacement:a==='reassign'?x.replacement_id:null,p_action:a})});
+ }
  if(x.action==='allocate'){
  if(!uuid(x.supervisor_id)||!uuid(x.student_id)||x.supervisor_id===x.student_id||x.confirm!=='ALLOCATE')return json(400,{error:'Invalid allocation'});
  return json(200,{ok:await rpc('academy_allocate_supervisor',{p_actor:u.id,p_supervisor:x.supervisor_id,p_student:x.student_id})});
