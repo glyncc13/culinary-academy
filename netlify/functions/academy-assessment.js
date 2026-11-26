@@ -18,9 +18,7 @@ exports.handler=async event=>{
  if(input.action==='load'){
  questions=await db('academy_questions?select=id,prompt,options,correct_index&level=eq.'+level+'&order=position');
  if(!questions.length)return json(409,{error:'Assessment unavailable'});
- const recent=await db('academy_assessment_runs?select=id&user_id=eq.'+uid+'&created_at=gt.'+encodeURIComponent(new Date(Date.now()-3600000).toISOString())+'&limit=30');
- if(recent.length>=30)return json(429,{error:'Assessment limit reached; try again later'});
- const rows=await db('academy_assessment_runs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({user_id:user.id,level,snapshot:questions})});runId=rows[0].id;}else{questions=[];runId=null;}
+ const result=await db('rpc/academy_start_run',{method:'POST',body:JSON.stringify({p_user:user.id,p_level:level})});if(!result)return json(429,{error:'Assessment limit reached or unavailable; try again later'});runId=result.id;questions=result.questions;}else{questions=[];runId=null;}
  const attempts=await db('academy_attempts?select=id,score,passed,submitted_at&user_id=eq.'+uid+'&level=eq.'+level+'&order=submitted_at.desc&limit=100');
  const passed=await db('academy_attempts?select=id&user_id=eq.'+uid+'&level=eq.'+level+'&passed=eq.true&limit=1');
  const modules=await db('academy_modules?select=slug&level=eq.'+level);
