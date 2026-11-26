@@ -17,5 +17,6 @@ async function currentUser(event) {
  if(!response.ok) throw new Error('Invalid or expired sign-in token');
  return response.json();
 }
+async function hasMfa(event,user){const token=(event.headers.authorization||event.headers.Authorization||'').replace(/^Bearer /,'');try{const claims=JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());return claims.sub===user.id&&claims.aal==='aal2'&&claims.exp>Date.now()/1000}catch{return false}}
 const site = () => {const u=new URL(process.env.SITE_URL);if(u.protocol!=='https:' && u.hostname!=='localhost')throw Error('Invalid SITE_URL');return u.origin;};
-module.exports={stripe,db,json,currentUser,site};
+module.exports={stripe,db,json,currentUser,site,hasMfa};
