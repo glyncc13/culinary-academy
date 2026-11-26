@@ -1,4 +1,14 @@
 # Production configuration — planning only
+
+## Proposed business details — 26 November 2026
+- Trading name: Culinary Academy (proposed; legal identity not confirmed).
+- Legal structure: undecided.
+- Support email: undecided.
+- Website domain: undecided.
+- Minimum student age: undecided; age eligibility and children's privacy assessment required before launch.
+
+Draft only. These unresolved details must be completed before publication or commercial launch. No deployment or live payment approval.
+
 Do not remove the hardcoded test project/test Stripe guards. Create a separate production project and hosting site only with explicit approval. No real credentials in repository.
 Required server variables: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (server only), SITE_URL, STRIPE_SECRET_KEY (server only), STRIPE_MONTHLY_PRICE_ID, STRIPE_WEBHOOK_SECRET (server only). Verify actual supported key types. Never expose service or Stripe secrets to browser.
 Before approval: private repository and replace public question bank; history secret scan; enable MFA for owners and leaked password protection; verified email delivery; least privilege; rate limits; CSP and headers; backup and restore; monitoring/incident plan; privacy retention schedule; terms acceptance evidence and contractual notices; tax review; accessibility; payment retry, concurrency and webhook ordering tests; real video and certificate tests.
