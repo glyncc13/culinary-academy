@@ -4,9 +4,19 @@
   "version": "0.2.0-rc.1",
   "type": "commonjs",
   "dependencies": {
-    "stripe": "^17.7.0"
+    "stripe": "17.7.0",
+    "@supabase/supabase-js": "2.89.0"
   },
   "scripts": {
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/build.cjs",
+    "audit": "npm audit --audit-level=high"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  },
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x"
   }
 }
