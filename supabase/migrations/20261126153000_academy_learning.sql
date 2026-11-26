@@ -80,7 +80,7 @@ select user_id into student from public.academy_practical_submissions where id=p
 if student is null or student=p_actor then raise exception 'review denied'; end if;
 perform 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student for share;
 if not found then raise exception 'review denied'; end if;
-if exists(select 1 from public.academy_evidence_files where submission_id=p_id and not attached) then raise exception 'evidence upload incomplete'; end if;
+if exists(select 1 from public.academy_evidence_files where submission_id=p_id and not attached and cancelled_at is null) then raise exception 'evidence upload incomplete'; end if;
 if jsonb_typeof(p_rubric) is distinct from 'object' or char_length(coalesce(p_feedback,'')) not between 1 and 4000 then raise exception 'invalid rubric'; end if;
 if (select count(*) from jsonb_object_keys(p_rubric))<>6 then raise exception 'invalid rubric keys'; end if;
 foreach k in array array['safety','preparation','technique','quality','organisation','reflection'] loop
@@ -117,7 +117,7 @@ begin
 perform 1 from public.academy_practical_submissions where id=p_submission and user_id=p_user and status='pending' for update;
 if not found then raise exception 'submission unavailable'; end if;
 if not exists(select 1 from public.subscriptions where user_id=p_user and status in ('active','trialing') and current_period_end>now()) then raise exception 'membership required'; end if;
-if (select count(*) from public.academy_evidence_files where submission_id=p_submission)>=5 then raise exception 'file limit'; end if;
+if (select count(*) from public.academy_evidence_files where submission_id=p_submission and cancelled_at is null)>=5 then raise exception 'file limit'; end if;
 insert into public.academy_evidence_files(id,submission_id,object_path,mime) values(fid,p_submission,p_user::text||'/'||p_submission::text||'/'||fid::text,p_mime) returning * into f;
 return to_jsonb(f);
 end $reserve$;
@@ -126,7 +126,7 @@ grant execute on function public.academy_reserve_evidence(uuid,uuid,text) to ser
 
 create function public.academy_attach_evidence(p_user uuid,p_file uuid) returns boolean language plpgsql security invoker set search_path='' as $attach$
 begin
-perform 1 from public.academy_practical_submissions s join public.academy_evidence_files f on f.submission_id=s.id where f.id=p_file and s.user_id=p_user and s.status='pending' for update of s;
+perform 1 from public.academy_practical_submissions s join public.academy_evidence_files f on f.submission_id=s.id where f.id=p_file and f.cancelled_at is null and s.user_id=p_user and s.status='pending' for update of s;
 if not found then raise exception 'attachment denied'; end if;
 update public.academy_evidence_files set attached=true where id=p_file;
 return true;
@@ -166,3 +166,15 @@ return true;
 end $change$;
 revoke all on function public.academy_change_supervisor(uuid,uuid,uuid,uuid,text) from public,anon,authenticated;
 grant execute on function public.academy_change_supervisor(uuid,uuid,uuid,uuid,text) to service_role;
+
+alter table public.academy_evidence_files add column cancelled_at timestamptz;
+create function public.academy_cancel_evidence(p_user uuid,p_submission uuid,p_file uuid) returns boolean language plpgsql security invoker set search_path='' as $cancel$
+begin
+perform 1 from public.academy_practical_submissions where id=p_submission and user_id=p_user and status='pending' for update;
+if not found then raise exception 'cancellation denied'; end if;
+update public.academy_evidence_files set cancelled_at=now() where id=p_file and submission_id=p_submission and not attached and cancelled_at is null;
+if not found then raise exception 'cancellation denied'; end if;
+return true;
+end $cancel$;
+revoke all on function public.academy_cancel_evidence(uuid,uuid,uuid) from public,anon,authenticated;
+grant execute on function public.academy_cancel_evidence(uuid,uuid,uuid) to service_role;
