@@ -44,6 +44,11 @@ exports.handler=async event=>{
  const rows=await db('academy_curriculum_drafts?select=content&approved=eq.true&lesson_id=eq.'+x.lesson_id);
  return json(200,{content:rows[0]?.content||null});
  }
+ if(x.action==='competency'){
+ const levels=await Promise.all([1,2,3].map(async level=>({level,practicalEligible:await rpc('academy_practical_eligible',{p_user:u.id,p_level:level})===true})));
+ const rows=await db('academy_practical_submissions?select=id,lesson_id,status,feedback,rubric,reviewed_at&user_id=eq.'+u.id+'&order=created_at.desc&limit=100');
+ return json(200,{levels,rows});
+ }
  if(x.action==='mine')return json(200,{rows:await db('academy_practical_submissions?select=*&user_id=eq.'+u.id+'&order=created_at.desc&limit=100')});
  if(x.action==='submit'&&uuid(x.lesson_id)&&typeof x.evidence==='string'&&x.evidence.trim().length>=20&&x.evidence.length<=4000)return json(200,{id:await rpc('academy_submit_practical',{p_user:u.id,p_lesson:x.lesson_id,p_evidence:x.evidence.trim()})});
  return json(400,{error:'Invalid request'});
