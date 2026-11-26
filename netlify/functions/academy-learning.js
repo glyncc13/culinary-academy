@@ -18,6 +18,14 @@ exports.handler=async event=>{
  if(!uuid(x.id)||!['competent','revise'].includes(x.status)||typeof x.feedback!=='string'||!x.feedback.trim()||x.feedback.length>4000)return json(400,{error:'Invalid review'});
  return json(200,{ok:await rpc('academy_review_practical',{p_actor:u.id,p_id:x.id,p_status:x.status,p_feedback:x.feedback.trim()})});
  }
+ if(x.action==='content'&&uuid(x.lesson_id)){
+ const paid=await db('subscriptions?select=user_id&user_id=eq.'+u.id+'&status=in.(active,trialing)&current_period_end=gt.'+encodeURIComponent(new Date().toISOString())+'&limit=1');
+ if(!paid.length)return json(403,{error:'Membership required'});
+ const visible=await db('lessons?select=id,academy_catalogue!inner(lesson_id)&id=eq.'+x.lesson_id+'&status=eq.published');
+ if(!visible.length)return json(404,{error:'Lesson unavailable'});
+ const rows=await db('academy_curriculum_drafts?select=content&lesson_id=eq.'+x.lesson_id);
+ return json(200,{content:rows[0]?.content||null});
+ }
  if(x.action==='mine')return json(200,{rows:await db('academy_practical_submissions?select=*&user_id=eq.'+u.id+'&order=created_at.desc&limit=100')});
  if(x.action==='submit'&&uuid(x.lesson_id)&&typeof x.evidence==='string'&&x.evidence.trim().length>=20&&x.evidence.length<=4000)return json(200,{id:await rpc('academy_submit_practical',{p_user:u.id,p_lesson:x.lesson_id,p_evidence:x.evidence.trim()})});
  return json(400,{error:'Invalid request'});
