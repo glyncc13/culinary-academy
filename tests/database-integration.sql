@@ -16,4 +16,39 @@ begin perform public.academy_grade_run('11111111-1111-4111-8111-111111111111','3
 end $$;
 insert into public.academy_privacy_requests(user_id,kind) values ('11111111-1111-4111-8111-111111111111','access');
 reset role;
+
+-- Additional isolated fixtures and assertions.
+insert into public.lessons(id,title,category,status) values
+('44444444-4444-4444-8444-444444444444','CI published','Level 1','published'),
+('55555555-5555-4555-8555-555555555555','CI draft','Level 1','draft'),
+('66666666-6666-4666-8666-666666666666','CI unlisted','Level 1','published');
+insert into public.academy_catalogue values ('44444444-4444-4444-8444-444444444444'),('55555555-5555-4555-8555-555555555555');
+insert into public.academy_certificates(user_id,level,recipient_name) values ('11111111-1111-4111-8111-111111111111',1,'CI Student');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $ begin
+if not public.has_paid_access(auth.uid()) then raise exception 'paid entitlement missing'; end if;
+if (select count(*) from public.lessons where title like 'CI %')<>1 then raise exception 'draft or unlisted lesson exposure'; end if;
+perform public.academy_complete('44444444-4444-4444-8444-444444444444');
+if not exists(select 1 from public.academy_progress where lesson_id='44444444-4444-4444-8444-444444444444') then raise exception 'progress not stored'; end if;
+if (select count(*) from public.academy_certificates)<>1 then raise exception 'own certificate missing'; end if;
+end $;
+select set_config('request.jwt.claim.sub','22222222-2222-4222-8222-222222222222',true);
+do $ begin
+if public.has_paid_access(auth.uid()) or exists(select 1 from public.lessons) or exists(select 1 from public.academy_progress) or exists(select 1 from public.academy_certificates) then raise exception 'unpaid or cross-account data exposure'; end if;
+end $;
+reset role;
+update public.subscriptions set current_period_end=now()-interval '1 second' where stripe_subscription_id='ci-sub';
+set local role authenticated;
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+do $ begin
+if public.has_paid_access(auth.uid()) or exists(select 1 from public.lessons) then raise exception 'expired membership retains lesson access'; end if;
+if (select count(*) from public.academy_certificates)<>1 then raise exception 'expired member lost existing certificate'; end if;
+end $;
+reset role;
+do $ begin
+if has_table_privilege('authenticated','public.academy_admins','insert') or has_table_privilege('authenticated','public.academy_questions','select') or has_table_privilege('authenticated','public.academy_attempts','insert') or has_table_privilege('authenticated','public.academy_privacy_requests','select') then raise exception 'privileged table grant exposed'; end if;
+if not exists(select 1 from storage.buckets where id='academy-videos' and not public) then raise exception 'video bucket not private'; end if;
+end $;
+
 rollback;
