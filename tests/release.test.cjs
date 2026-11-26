@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.join(__dirname,'..');
-function load(name,shared){const exports={};const context={exports,require:n=>n==='./_shared'?shared:n.startsWith('../../curriculum/')?require(path.join(root,'curriculum',path.basename(n))):require(n),Buffer,Date,console,process:{env:{STRIPE_MONTHLY_PRICE_ID:'price_test'}},encodeURIComponent};vm.runInNewContext(fs.readFileSync(path.join(root,'netlify/functions',name+'.js'),'utf8'),context);return exports.handler;}
+function load(name,shared,overrides={},env={}){const exports={};const context={exports,require:n=>Object.hasOwn(overrides,n)?overrides[n]:n==='./_shared'?shared:n.startsWith('../../curriculum/')?require(path.join(root,'curriculum',path.basename(n))):require(n),Buffer,Date,console,process:{env:{STRIPE_MONTHLY_PRICE_ID:'price_test',...env}},encodeURIComponent};vm.runInNewContext(fs.readFileSync(path.join(root,'netlify/functions',name+'.js'),'utf8'),context);return exports.handler;}
 const json=(statusCode,value)=>({statusCode,body:JSON.stringify(value)});
 const event=(body={})=>({httpMethod:'POST',headers:{},body:JSON.stringify(body)});
 test('browser module parses and referenced IDs exist',()=>{const html=fs.readFileSync(path.join(root,'membership.html'),'utf8');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);for(const m of html.matchAll(/\$\('([^']+)'\)/g))assert.ok(ids.includes(m[1]),m[1]);const script=html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*;\s*/,'');new vm.Script('(async()=>{'+script+'})()');});
@@ -45,5 +45,18 @@ const result=await handler(event({level:1,name:'Test Student',consent:true,user_
 assert.equal(result.statusCode,missing?403:200,missing||'eligible');
 assert.equal(writes,missing?0:1);
 if(!missing)assert.ok(Buffer.from(result.body,'base64').toString().startsWith('%PDF-1.4'));
+}
+});
+
+test('scheduled cleanup is opt-in and retains failed deletion records',async()=>{
+const id='11111111-1111-4111-8111-111111111111',object_path=id+'/'+id+'/'+id;
+for(const mode of ['disabled','invalid','failure','success']){
+let deletes=0,patches=0,queries=0;
+const handler=load('academy-evidence-cleanup',{json,db:async(p,o)=>{queries++;if(p.startsWith('rpc/'))return [{id,object_path:mode==='invalid'?'unsafe':object_path}];assert.ok(p.includes('attached=eq.false&cancelled_at=not.is.null'));assert.equal(o.method,'PATCH');patches++;return null}},{'@supabase/supabase-js':{createClient:()=>({storage:{from:bucket=>{assert.equal(bucket,'academy-evidence');return {remove:async paths=>{deletes++;assert.equal(paths[0],object_path);return {error:mode==='failure'?Error('fixture'):null}}}}}})}},{ACADEMY_ENABLE_EVIDENCE_CLEANUP:mode==='disabled'?'false':'true'});
+const result=await handler();
+assert.equal(result.statusCode,['invalid','failure'].includes(mode)?503:200);
+assert.equal(deletes,['failure','success'].includes(mode)?1:0);
+assert.equal(patches,mode==='success'?1:0);
+if(mode==='disabled')assert.equal(queries,0);
 }
 });
