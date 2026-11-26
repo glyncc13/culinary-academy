@@ -77,10 +77,13 @@ create function public.academy_mark_practical(p_actor uuid,p_id uuid,p_rubric js
 declare k text; competent boolean:=true; student uuid;
 begin
 select user_id into student from public.academy_practical_submissions where id=p_id and status='pending' for update;
-if student is null or student=p_actor or not exists(select 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student) then raise exception 'review denied'; end if;
+if student is null or student=p_actor then raise exception 'review denied'; end if;
+perform 1 from public.academy_supervisor_students where supervisor_id=p_actor and student_id=student for share;
+if not found then raise exception 'review denied'; end if;
 if jsonb_typeof(p_rubric) is distinct from 'object' or char_length(coalesce(p_feedback,'')) not between 1 and 4000 then raise exception 'invalid rubric'; end if;
+if (select count(*) from jsonb_object_keys(p_rubric))<>6 then raise exception 'invalid rubric keys'; end if;
 foreach k in array array['safety','preparation','technique','quality','organisation','reflection'] loop
-if coalesce(p_rubric->>k,'') not in ('0','1','2','3') then raise exception 'invalid score'; end if;
+if jsonb_typeof(p_rubric->k) is distinct from 'number' or coalesce(p_rubric->>k,'') not in ('0','1','2','3') then raise exception 'invalid score'; end if;
 if (p_rubric->>k)::integer<2 then competent:=false; end if;
 end loop;
 update public.academy_practical_submissions set rubric=p_rubric,status=case when competent then 'competent' else 'revise' end,reviewer=p_actor,feedback=p_feedback,reviewed_at=now() where id=p_id;
@@ -132,6 +135,7 @@ grant execute on function public.academy_attach_evidence(uuid,uuid) to service_r
 create function public.academy_allocate_supervisor(p_actor uuid,p_supervisor uuid,p_student uuid) returns boolean language plpgsql security invoker set search_path='' as $allocation$
 begin
 if not exists(select 1 from public.academy_admins where user_id=p_actor) or p_supervisor=p_student then raise exception 'allocation denied'; end if;
+perform pg_advisory_xact_lock(927351);
 insert into public.academy_supervisors(user_id) values(p_supervisor) on conflict do nothing;
 insert into public.academy_supervisor_students(supervisor_id,student_id) values(p_supervisor,p_student) on conflict do nothing;
 insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,'allocateSupervisor',p_supervisor::text||':'||p_student::text,gen_random_uuid(),'succeeded');
@@ -139,3 +143,25 @@ return true;
 end $allocation$;
 revoke all on function public.academy_allocate_supervisor(uuid,uuid,uuid) from public,anon,authenticated;
 grant execute on function public.academy_allocate_supervisor(uuid,uuid,uuid) to service_role;
+
+create function public.academy_change_supervisor(p_actor uuid,p_supervisor uuid,p_student uuid,p_replacement uuid,p_action text) returns boolean language plpgsql security invoker set search_path='' as $change$
+begin
+if not exists(select 1 from public.academy_admins where user_id=p_actor) then raise exception 'administrator required'; end if;
+perform pg_advisory_xact_lock(927351);
+if p_action='revoke' then
+delete from public.academy_supervisor_students where supervisor_id=p_supervisor;
+delete from public.academy_supervisors where user_id=p_supervisor;
+elsif p_action in ('remove','reassign') then
+delete from public.academy_supervisor_students where supervisor_id=p_supervisor and student_id=p_student;
+if not found then raise exception 'allocation unavailable'; end if;
+if p_action='reassign' then
+if p_replacement is null or p_replacement=p_student or p_replacement=p_supervisor then raise exception 'invalid replacement'; end if;
+insert into public.academy_supervisors(user_id) values(p_replacement) on conflict do nothing;
+insert into public.academy_supervisor_students(supervisor_id,student_id) values(p_replacement,p_student) on conflict do nothing;
+end if;
+else raise exception 'invalid action'; end if;
+insert into public.academy_admin_audit(actor,action,target,request_id,outcome) values(p_actor,p_action||'Supervisor',concat_ws(':',p_supervisor,p_student,p_replacement),gen_random_uuid(),'succeeded');
+return true;
+end $change$;
+revoke all on function public.academy_change_supervisor(uuid,uuid,uuid,uuid,text) from public,anon,authenticated;
+grant execute on function public.academy_change_supervisor(uuid,uuid,uuid,uuid,text) to service_role;
