@@ -10,6 +10,7 @@ if((event.body||'').length>4000)return json(413,{error:'Request too large'});
 const x=JSON.parse(event.body||'{}');
 if(!uuid(x.submission_id))return json(400,{error:'Invalid submission'});
 const s=(await db('academy_practical_submissions?select=id,user_id,status&id=eq.'+x.submission_id))[0];
+if(!u?.id)return json(401,{error:'Sign in required'});
 if(!s)return json(404,{error:'Unavailable'});
 const owner=s.user_id===u.id;
 const assigned=!owner&&await hasMfa(event,u)&&(await db('academy_supervisor_students?select=student_id&supervisor_id=eq.'+u.id+'&student_id=eq.'+s.user_id)).length>0;
@@ -21,11 +22,15 @@ const {data,error}=await storage.createSignedUploadUrl(f.object_path,{upsert:fal
 return json(200,{id:f.id,path:f.object_path,token:data.token});
 }
 if(x.action==='list'){
-const rows=await db('academy_evidence_files?select=id,mime,attached&submission_id=eq.'+s.id+(owner&&s.status==='pending'?'':'&attached=eq.true'));
+const rows=await db('academy_evidence_files?select=id,mime,attached&cancelled_at=is.null&submission_id=eq.'+s.id+(owner&&s.status==='pending'?'':'&attached=eq.true'));
 return json(200,{rows});
 }
 if(!uuid(x.id))return json(400,{error:'Invalid file'});
-const f=(await db('academy_evidence_files?select=*&id=eq.'+x.id+'&submission_id=eq.'+s.id))[0];if(!f)return json(404,{error:'Unavailable'});
+const f=(await db('academy_evidence_files?select=*&id=eq.'+x.id+'&cancelled_at=is.null&submission_id=eq.'+s.id))[0];if(!f)return json(404,{error:'Unavailable'});
+if(x.action==='cancel'&&owner&&s.status==='pending'&&!f.attached){
+await db('rpc/academy_cancel_evidence',{method:'POST',body:JSON.stringify({p_user:u.id,p_submission:s.id,p_file:f.id})});
+return json(200,{ok:true});
+}
 if(x.action==='retry'&&owner&&s.status==='pending'&&!f.attached){
 const paid=await db('subscriptions?select=user_id&user_id=eq.'+u.id+'&status=in.(active,trialing)&current_period_end=gt.'+encodeURIComponent(new Date().toISOString())+'&limit=1');
 if(!paid.length)return json(403,{error:'Membership required'});
