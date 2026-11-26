@@ -27,6 +27,8 @@ exports.handler=async event=>{
  const available=new Set(catalogue.map(x=>x.lesson_id).filter(id=>published.some(p=>p.id===id)));const required=links.filter(x=>modules.some(m=>m.slug===x.module_slug)&&available.has(x.lesson_id));
  if(!passed.length||!modules.length||!modules.every(m=>required.some(x=>x.module_slug===m.slug))||!required.every(x=>progress.some(p=>p.lesson_id===x.lesson_id)))return json(403,{error:'Complete all required lessons and pass the assessment first'});
  if(await db('rpc/academy_practical_eligible',{method:'POST',body:JSON.stringify({p_user:user.id,p_level:level})})!==true)return json(403,{error:'Complete a competent practical assignment in every module first'});
+ const competent=await db('rpc/academy_practical_eligible',{method:'POST',body:JSON.stringify({p_user:user.id,p_level:level})});
+ if(competent!==true)return json(403,{error:'Complete a competent practical assessment in every module first'});
  await db('academy_certificates?on_conflict=user_id,level',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates'},body:JSON.stringify({user_id:user.id,level,recipient_name:name})});c=(await db(path))[0];
  }
  if(!c||c.revoked_at)return json(403,{error:'Certificate unavailable'});
