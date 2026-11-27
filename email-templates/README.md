@@ -13,3 +13,7 @@ Reference: https://supabase.com/docs/guides/auth/auth-email-templates
 5. Record delivery results and revert templates using the backup if acceptance fails.
 
 These are authentication templates only. Membership confirmation, renewal notices, payment failure, practical assessment and certificate notifications need separately approved content and durable event delivery; no live email delivery has been configured. Do not send unsolicited messages or enable live payments.
+
+## Transactional notification rendering
+
+`notifications.cjs` supplies branded HTML and plain-text membership activation, cancellation, payment failure, practical review and certificate availability drafts. The renderer is intentionally disconnected from sending and accepts only a configured HTTPS origin. No recipient data or assessment results are embedded. Before enabling delivery, implement durable event/outbox records, deduplication, delivery retries and suppression, approved sender settings and isolated acceptance tests. Contract confirmation and renewal notices require separate professional review.
