@@ -1,3 +1,5 @@
 # Notification delivery foundation
 Additive migration supplies an outbox, per-user event deduplication, bounded concurrent claims, lease ownership, retry delay and terminal states. No trigger or sender is enabled and no historical records are queued.
 Before deploying: replay migration in disposable PostgreSQL and verify permissions, concurrent claims, stale leases and terminal retries. Integrate verified events atomically with their business writes. Choose an approved transport with persistent idempotency keys based on outbox ID; ambiguous delivery outcomes must be reconciled rather than blindly resent. Resolve recipient at delivery time from verified account records, suppress deleted or ineligible accounts and avoid logging message bodies. Keep delivery disabled until isolated acceptance and owner approval.
+
+Practical review and certificate creation now enqueue atomically on future successful database writes. Existing rows are not backfilled. Membership notices must distinguish genuine entitlement transitions from stale webhook deliveries, and invoice failure must be verified from the authoritative payment event. These are not yet wired. No sender is enabled.
