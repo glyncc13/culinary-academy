@@ -99,3 +99,19 @@ assert.equal(attempts,2);assert.equal(results[0].statusCode,200);assert.equal(re
  assert.equal((await handler({httpMethod:'POST',body})).statusCode,status);
  }
  });
+
+test('failed invoice queues only current unpaid academy invoice before recording event',async()=>{
+ for(const paid of [false,true]){
+  const writes=[];
+  const invoice={id:'in_fixture',customer:'cus_fixture',subscription:'sub_fixture',livemode:false,status:paid?'paid':'open',paid,attempted:true};
+  const handler=load('stripe-webhook',{json,stripe:{webhooks:{constructEvent:()=>({id:'evt_fixture',type:'invoice.payment_failed',livemode:false,data:{object:invoice}})},invoices:{retrieve:async()=>invoice}},db:async(p,o)=>{
+   if(o?.method==='POST'){writes.push([p,JSON.parse(o.body)]);return null;}
+   if(p.startsWith('subscriptions?')){assert.match(p,/stripe_price_id=eq.price_test/);return [{user_id:'student'}];}
+   return [];
+  }});
+  assert.equal((await handler(event())).statusCode,200);
+  assert.equal(writes.length,paid?1:2);
+  if(!paid)assert.deepEqual(writes[0][1],{user_id:'student',kind:'payment_failed',event_key:'in_fixture'});
+  assert.match(writes.at(-1)[0],/^stripe_webhook_events/);
+ }
+});
