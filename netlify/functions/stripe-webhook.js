@@ -8,6 +8,16 @@ async function syncSubscription(subscription){
  const item=subscription.items.data.find(i=>i.price.id===process.env.STRIPE_MONTHLY_PRICE_ID); if(!item){await db('subscriptions?stripe_subscription_id=eq.'+encodeURIComponent(subscription.id)+'&user_id=eq.'+encodeURIComponent(userId),{method:'PATCH',body:JSON.stringify({status:'canceled',updated_at:new Date().toISOString()})});return;}
  await db('subscriptions?on_conflict=stripe_subscription_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates'},body:JSON.stringify({stripe_subscription_id:subscription.id,user_id:userId,stripe_customer_id:customerId,stripe_price_id:item?.price?.id||null,status:subscription.status,current_period_end:(item.current_period_end||subscription.current_period_end)?new Date((item.current_period_end||subscription.current_period_end)*1000).toISOString():null,cancel_at_period_end:subscription.cancel_at_period_end,updated_at:new Date().toISOString()})});
 }
+async function queuePaymentFailure(invoice){
+ if(!invoice?.id || !invoice.customer || !invoice.subscription)return;
+ const latest=await stripe.invoices.retrieve(invoice.id);
+ const customer=typeof latest.customer==='string'?latest.customer:latest.customer?.id;
+ const subscription=typeof latest.subscription==='string'?latest.subscription:latest.subscription?.id;
+ if(latest.livemode!==false||latest.status!=='open'||latest.paid||!latest.attempted||!customer||!subscription)return;
+ const rows=await db('subscriptions?stripe_subscription_id=eq.'+encodeURIComponent(subscription)+'&stripe_customer_id=eq.'+encodeURIComponent(customer)+'&stripe_price_id=eq.'+encodeURIComponent(process.env.STRIPE_MONTHLY_PRICE_ID)+'&select=user_id');
+ if(rows.length!==1)return;
+ await db('academy_notification_outbox?on_conflict=user_id,kind,event_key',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates'},body:JSON.stringify({user_id:rows[0].user_id,kind:'payment_failed',event_key:latest.id})});
+}
 exports.handler=async(event)=>{
  if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
  let stripeEvent;
@@ -28,6 +38,7 @@ exports.handler=async(event)=>{
    const sub=await stripe.subscriptions.retrieve(id);
    await syncSubscription(sub);
   }
+  if(stripeEvent.type==='invoice.payment_failed')await queuePaymentFailure(stripeEvent.data.object);
   await db('stripe_webhook_events?on_conflict=stripe_event_id',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates'},body:JSON.stringify({stripe_event_id:stripeEvent.id,event_type:stripeEvent.type})});
   return json(200,{received:true});
  }catch(e){console.error('Webhook processing failed');return json(500,{error:'Webhook processing failed; retry required'});}finally{if(locked)try{await db('rpc/academy_release_lease',{method:'POST',body:JSON.stringify({p_scope:scope,p_token:token})})}catch{console.error('Webhook lease release failed')}}
